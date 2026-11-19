@@ -1,0 +1,17 @@
+
+{
+    "id": "barn80",
+    "name": "Барнхаус 80",
+    "gallery": {
+        "exterior": [
+            "images/exterior-01.jpg",
+            "images/exterior-02.jpg",
+            "images/exterior-03.jpg",
+            "images/exterior-04.jpg",
+            "images/exterior-05.jpg"
+        ],
+        "interior": [],
+        "plans": [],
+        "surroundings": []
+    }
+}

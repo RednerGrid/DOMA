@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Барнхаус 80 — DOMA</title>
+
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/house.css">
+</head>
+
+<body>
+
+    <div class="site-wrapper">
+
+        <!-- HEADER -->
+        <header class="site-header">
+            <div class="header-container">
+
+                <a href="./index.html" class="logo">
+                    <span class="logo-symbol">⌂</span>
+                    <span class="logo-text">DOMA</span>
+                </a>
+
+                <nav class="header-nav">
+                    <a href="./index.html#projects">Проекты</a>
+                    <a href="./index.html#about">О платформе</a>
+                    <a href="./index.html#how-it-works">
+                        Как это работает
+                    </a>
+                </nav>
+
+                <a href="#contact" class="header-button">
+                    Оставить заявку
+                </a>
+
+            </div>
+        </header>
+
+        <!-- MAIN -->
+        <main class="project-page">
+
+            <!-- BREADCRUMBS -->
+            <nav class="project-breadcrumbs" aria-label="Навигация">
+                <a href="./index.html">Главная</a>
+                <span>›</span>
+                <a href="./index.html#projects">Каталог</a>
+                <span>›</span>
+                <span>Барнхаус 80</span>
+            </nav>
+
+            <!-- PROJECT OVERVIEW -->
+            <section class="project-overview">
+
+                <!-- VISUAL AREA -->
+                <div class="project-visual">
+
+                    <img src="./assets/images/house-preview.jpg" alt="Барнхаус 80 — экстерьер"
+                        class="project-visual-image">
+                    <div class="project-gallery-placeholder" hidden>
+                        <span>Материалы уточняются</span>
+                    </div>
+                    <!-- VIEWER NAVIGATION -->
+
+                    <div class="project-visual-menu" aria-label="Режим просмотра">
+
+                        <button type="button" class="active" data-view="exterior">
+                            Экстерьер
+                        </button>
+
+                        <button type="button" data-view="interior">
+                            Интерьер
+                        </button>
+
+                        <button type="button" data-view="plans">
+                            Планировки
+                        </button>
+
+                        <button type="button" data-view="surroundings">
+                            Окружение
+                        </button>
+
+                    </div>
+
+
+                    <!-- VIEWER BOTTOM BAR -->
+                    <div class="project-visual-bottom">
+
+                        <div class="project-thumbnails">
+
+                            <button type="button" class="project-thumbnail active">
+                                <img src="./projects/barn80/images/exterior-01.jpg" alt="Главный вид дома">
+                            </button>
+
+                            <button type="button" class="project-thumbnail">
+                                <img src="./projects/barn80/images/exterior-02.jpg" alt="Вид дома 2">
+                            </button>
+
+                            <button type="button" class="project-thumbnail">
+                                <img src="./projects/barn80/images/exterior-03.jpg" alt="Вид дома 3">
+                            </button>
+
+                            <button type="button" class="project-thumbnail">
+                                <img src="./projects/barn80/images/exterior-04.jpg" alt="Вид дома 4">
+                            </button>
+
+                            <button type="button" class="project-thumbnail">
+                                <img src="./projects/barn80/images/exterior-05.jpg" alt="Вид дома 5">
+                            </button>
+
+                        </div>
+
+                        <button type="button" class="project-fullscreen" aria-label="Полный экран">
+                            ⛶
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- PROJECT INFORMATION -->
+                <aside class="project-info">
+
+                    <div class="project-info-main">
+
+                        <h1>Барнхаус 80</h1>
+
+                        <p class="project-description">
+                            Современный загородный дом
+                            в архитектуре барнхаус.
+                        </p>
+
+                        <!-- TAGS -->
+                        <div class="project-tags">
+                            <span>Барнхаус</span>
+                            <span>1 этаж</span>
+                            <span>Терраса</span>
+                        </div>
+
+                        <!-- PRICE -->
+                        <div class="project-price">
+                            <strong>Цена уточняется</strong>
+                            <p>Стоимость зависит от комплектации</p>
+                        </div>
+
+                        <!-- PRIMARY ACTION -->
+                        <button type="button" class="project-primary-button">
+                            Получить расчёт под мой участок
+                            <span>→</span>
+                        </button>
+
+                        <!-- SECONDARY ACTIONS -->
+                        <div class="project-secondary-actions">
+
+                            <button type="button">
+                                Консультация
+                            </button>
+
+                            <button type="button">
+                                Задать вопрос
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CHARACTERISTICS -->
+                    <div class="project-characteristics">
+
+                        <div>
+                            <span>Площадь</span>
+                            <strong>80 м²</strong>
+                        </div>
+
+                        <div>
+                            <span>Спальни</span>
+                            <strong>2</strong>
+                        </div>
+
+                        <div>
+                            <span>Санузлы</span>
+                            <strong>1</strong>
+                        </div>
+
+                        <div>
+                            <span>Габариты</span>
+                            <strong>Уточняется</strong>
+                        </div>
+
+                        <div>
+                            <span>Технология</span>
+                            <strong>Уточняется</strong>
+                        </div>
+
+                        <div>
+                            <span>Срок строительства</span>
+                            <strong>Уточняется</strong>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+    <script type="module" src="./js/houseGallery.js"></script>
+</body>
+
+</html>
