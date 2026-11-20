@@ -51,7 +51,11 @@ function showImage(imagePath, alt) {
 
         // Сначала устанавливаем режим отображения,
         // затем подменяем изображение.
-        mainImage.style.objectFit = objectFit;
+        mainImage.style.objectFit = window.matchMedia("(max-width: 700px)").matches
+            ? "cover"
+            : objectFit;
+        // Per-image mobile framing can be configured later without new renders.
+        mainImage.style.objectPosition = "50% 50%";
         mainImage.src = imageUrl;
         mainImage.alt = alt;
         mainImage.style.display = "";
@@ -103,6 +107,8 @@ function showImage(imagePath, alt) {
                     });
 
                 button.classList.add("active");
+
+                document.dispatchEvent(new Event("doma:gallery-change"));
 
                 button.scrollIntoView({
                     behavior: "smooth",
@@ -190,6 +196,12 @@ function showImage(imagePath, alt) {
                     }
                 );
             });
+
+            // On mobile, the sheet keeps the room list independently.
+            // Select the first room so swipe navigation works immediately.
+            if (window.matchMedia("(max-width: 700px)").matches) {
+                showRoomGallery(availableRooms[0][0]);
+            }
         }
 
         // Уровень 2: рендеры выбранной комнаты
@@ -239,6 +251,33 @@ function showImage(imagePath, alt) {
                 }
             });
         }
+
+        // API for mobile navigation: one shared gallery state, no duplicate fetch.
+        window.domaGallery = {
+            project,
+            getState: () => ({ activeView, activeRoom, activeImageIndex }),
+            selectView: (view) => {
+                const button = [...viewButtons].find(item => item.dataset.view === view);
+                button?.click();
+                document.dispatchEvent(new Event("doma:gallery-change"));
+            },
+            selectRoom: (roomId) => {
+                showRoomGallery(roomId);
+                document.dispatchEvent(new Event("doma:gallery-change"));
+            },
+            step: (direction) => {
+                const images = activeView === "interior"
+                    ? project.gallery?.interior?.[activeRoom]?.images ?? []
+                    : project.gallery?.[activeView] ?? [];
+                if (!Array.isArray(images) || images.length < 2) return;
+                const next = (activeImageIndex + direction + images.length) % images.length;
+                const buttons = thumbnailsContainer.querySelectorAll(
+                    ".project-thumbnail:not(.project-thumbnail-back)"
+                );
+                buttons[next]?.click();
+            }
+        };
+        document.dispatchEvent(new Event("doma:gallery-ready"));
 
         // Стрелки в полноэкранном режиме
         document.addEventListener("keydown", (event) => {
@@ -316,6 +355,19 @@ if (visualContainer && fullscreenButton) {
     });
 }
 
+// On mobile, tapping the photo opens fullscreen; controls keep their own actions.
+if (mainImage && visualContainer) {
+    mainImage.addEventListener("click", async () => {
+        if (!window.matchMedia("(max-width: 700px)").matches) return;
+        if (document.fullscreenElement === visualContainer) return;
+        try {
+            await visualContainer.requestFullscreen();
+        } catch (error) {
+            console.error("Ошибка полноэкранного просмотра:", error);
+        }
+    });
+}
+
 document.addEventListener("fullscreenchange", () => {
     if (!fullscreenButton) return;
 
@@ -331,3 +383,118 @@ document.addEventListener("fullscreenchange", () => {
 });
 
 initHouseGallery();
+
+// Mobile bottom sheet uses the same gallery state as the desktop viewer.
+function initMobileGallerySheet() {
+    const sheet = document.querySelector(".gallery-sheet");
+    const content = sheet?.querySelector(".gallery-sheet-content");
+    const categories = sheet?.querySelector(".gallery-sheet-categories");
+    const items = sheet?.querySelector(".gallery-sheet-items");
+    const count = document.querySelector(".gallery-progress-count");
+    const dots = document.querySelector(".gallery-progress-dots");
+    if (!sheet || !content || !categories || !items) return;
+
+    // Keep navigation visible; measure its content-driven height for overlay controls.
+    const visual = sheet.closest(".project-visual");
+    if (visual && typeof ResizeObserver !== "undefined") {
+        const observer = new ResizeObserver(() => {
+            visual.style.setProperty("--gallery-panel-height", `${sheet.getBoundingClientRect().height}px`);
+        });
+        observer.observe(sheet);
+    }
+
+    function render() {
+        const gallery = window.domaGallery;
+        if (!gallery) return;
+        const { project } = gallery;
+        const { activeView, activeRoom, activeImageIndex } = gallery.getState();
+
+        categories.replaceChildren();
+        viewButtons.forEach(original => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "gallery-sheet-category";
+            button.textContent = original.textContent.trim();
+            button.classList.toggle("active", original.dataset.view === activeView);
+            button.addEventListener("click", () => gallery.selectView(original.dataset.view));
+            categories.appendChild(button);
+        });
+
+        items.replaceChildren();
+        if (activeView === "interior") {
+            const rooms = Object.entries(project.gallery?.interior ?? {}).filter(
+                ([, room]) => Array.isArray(room.images) && room.images.length
+            );
+            rooms.forEach(([roomId, room]) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "gallery-sheet-item";
+                button.classList.toggle("active", activeRoom === roomId);
+                const img = document.createElement("img");
+                img.src = PROJECT_PATH + room.images[0];
+                img.alt = room.title;
+                img.loading = "lazy";
+                const label = document.createElement("span");
+                label.textContent = room.title;
+                button.append(img, label);
+                button.addEventListener("click", () => gallery.selectRoom(roomId));
+                items.appendChild(button);
+            });
+        } else {
+            const images = project.gallery?.[activeView] ?? [];
+            if (!Array.isArray(images) || !images.length) {
+                const empty = document.createElement("p");
+                empty.className = "gallery-sheet-empty";
+                empty.textContent = "Материалы готовятся";
+                items.appendChild(empty);
+            }
+            if (Array.isArray(images) && images.length) {
+                const hint = document.createElement("p");
+                hint.className = "gallery-sheet-empty";
+                hint.textContent = "Листайте изображения свайпом влево или вправо";
+                items.appendChild(hint);
+            }
+            // For exterior, swipes replace thumbnails; no second thumbnail strip.
+        }
+
+        const images = activeView === "interior"
+            ? project.gallery?.interior?.[activeRoom]?.images ?? []
+            : project.gallery?.[activeView] ?? [];
+        const total = Array.isArray(images) ? images.length : 0;
+        if (count) count.textContent = total ? `${activeImageIndex + 1} / ${total}` : "";
+        if (dots) {
+            dots.replaceChildren();
+            // Cap visual dots to avoid overflow with large image sets.
+            if (total <= 12) {
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement("span");
+                    dot.className = "gallery-progress-dot";
+                    dot.classList.toggle("active", i === activeImageIndex);
+                    dots.appendChild(dot);
+                }
+            }
+        }
+    }
+
+    document.addEventListener("doma:gallery-ready", render);
+    document.addEventListener("doma:gallery-change", render);
+    if (window.domaGallery) render();
+
+    // Only horizontal swipes over the image area navigate photos.
+    let startX = 0, startY = 0;
+    visualContainer?.addEventListener("touchstart", event => {
+        if (event.touches.length !== 1 || event.target.closest("button, .gallery-sheet")) return;
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+    }, { passive: true });
+    visualContainer?.addEventListener("touchend", event => {
+        if (event.changedTouches.length !== 1 || event.target.closest("button, .gallery-sheet")) return;
+        const dx = event.changedTouches[0].clientX - startX;
+        const dy = event.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+            window.domaGallery?.step(dx < 0 ? 1 : -1);
+        }
+    }, { passive: true });
+}
+
+initMobileGallerySheet();

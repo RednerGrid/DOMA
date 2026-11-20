@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./css/house.css">
 </head>
 
-<body>
+<body class="house-page">
 
     <div class="site-wrapper">
 
@@ -32,6 +32,15 @@
                     </a>
                 </nav>
 
+                <details class="mobile-menu">
+                    <summary aria-label="Открыть меню"><span></span><span></span><span></span></summary>
+                    <nav aria-label="Мобильная навигация">
+                        <a href="./index.html#projects">Проекты</a>
+                        <a href="./index.html#about">О платформе</a>
+                        <a href="./index.html#how-it-works">Как это работает</a>
+                        <a href="#contact">Оставить заявку</a>
+                    </nav>
+                </details>
                 <a href="#contact" class="header-button">
                     Оставить заявку
                 </a>
@@ -84,6 +93,20 @@
 
                     </div>
 
+
+                    <!-- MOBILE GALLERY BOTTOM SHEET -->
+                    <section class="gallery-sheet" aria-label="Исследовать дом">
+                        <h2 class="gallery-sheet-title">Исследовать дом</h2>
+                        <div class="gallery-sheet-content" id="gallery-sheet-content">
+                            <div class="gallery-sheet-categories" aria-label="Разделы галереи"></div>
+                            <div class="gallery-sheet-items" aria-label="Комнаты и изображения"></div>
+                        </div>
+                    </section>
+
+                    <div class="gallery-progress" aria-live="polite">
+                        <span class="gallery-progress-count">1 / 5</span>
+                        <div class="gallery-progress-dots" aria-label="Номер изображения"></div>
+                    </div>
 
                     <!-- VIEWER BOTTOM BAR -->
                     <div class="project-visual-bottom">

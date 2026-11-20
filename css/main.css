@@ -331,3 +331,58 @@ body {
     background: #ffffff;
     min-height: 100vh;
 }
+
+/* MOBILE HEADER AND HOME */
+.mobile-menu { display: none; }
+
+@media (max-width: 700px) {
+    html, body { width: 100%; max-width: 100%; }
+    .site-wrapper { width: 100%; min-width: 0; }
+    .site-header { position: relative; z-index: 20; height: 56px; }
+    .header-container { padding: 0 16px; gap: 12px; }
+    .logo { font-size: 23px; gap: 6px; }
+    .logo-symbol { font-size: 30px; }
+    .header-nav, .header-button { display: none; }
+    .mobile-menu { display: block; margin-left: auto; position: relative; }
+    .mobile-menu summary {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: 5px; width: 44px; height: 44px; padding: 10px;
+        cursor: pointer; list-style: none;
+    }
+    .mobile-menu summary::-webkit-details-marker { display: none; }
+    .mobile-menu summary span { height: 2px; width: 24px; background: #171717; border-radius: 2px; }
+    .mobile-menu nav {
+        position: absolute; top: calc(100% + 5px); right: 0;
+        width: min(280px, calc(100vw - 32px));
+        display: flex; flex-direction: column; gap: 0;
+        padding: 8px; border: 1px solid #e8e8e8;
+        border-radius: 12px; background: #fff;
+        box-shadow: 0 12px 28px rgba(0,0,0,.12);
+    }
+    .mobile-menu nav a { padding: 12px; text-decoration: none; color: #171717; font-size: 14px; }
+    .mobile-menu nav a:focus-visible { outline: 2px solid #171717; }
+
+    .hero { height: auto; min-height: min(720px, calc(100svh - 56px)); }
+    .hero-content { padding: 64px 20px 90px; min-width: 0; }
+    .hero-label { font-size: 10px; letter-spacing: 1.3px; }
+    .hero h1 { font-size: clamp(32px, 8vw, 46px); letter-spacing: -1px; overflow-wrap: anywhere; }
+    .hero p { font-size: 15px; line-height: 1.5; }
+    .hero-button { max-width: 100%; gap: 12px; padding: 14px 18px; }
+    .hero-scroll { right: 16px; bottom: 18px; font-size: 9px; }
+    .catalog { padding: 32px 0 56px; }
+    .catalog-header { padding: 0 20px; margin-bottom: 20px; }
+    .catalog-header h2 { font-size: 27px; }
+    .catalog-grid {
+        display: flex; flex-wrap: nowrap; gap: 12px;
+        overflow-x: auto; overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory; scroll-padding-inline: 20px;
+        padding: 0 20px 12px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        touch-action: pan-x pan-y;
+    }
+    .catalog-grid::-webkit-scrollbar { display: none; }
+    .house-card { flex: 0 0 min(84vw, 360px); scroll-snap-align: start; }
+    .house-card-info { padding: 14px; }
+    .house-card-specs { font-size: 12px; }
+}
