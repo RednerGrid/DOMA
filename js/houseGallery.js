@@ -11,19 +11,39 @@ const viewButtons = document.querySelectorAll(".project-visual-menu button");
 const visualContainer = document.querySelector(".project-visual");
 const fullscreenButton = document.querySelector(".project-fullscreen");
 const object360Button = document.querySelector(".project-object360-toggle");
+const object360Modal = document.querySelector(".doma-object360-modal");
+const object360Dialog = document.querySelector(".doma-object360-dialog");
 const object360Host = document.querySelector(".doma-object360-host");
+const object360Close = document.querySelector(".doma-object360-close");
 let object360Instance = null;
+let object360ReturnFocus = null;
 
 function stopObject360() {
-    if (!object360Instance) return;
-    object360Instance.destroy();
+    if (object360Modal?.hidden) return;
+    object360Instance?.destroy();
     object360Instance = null;
-    object360Host.hidden = true;
-    visualContainer.classList.remove("is-object360");
-    object360Button.setAttribute("aria-pressed", "false");
-    object360Button.setAttribute("aria-label", "Включить облёт 360°");
+    object360Modal.hidden = true;
+    document.body.classList.remove("doma-object360-open");
+    object360Button?.setAttribute("aria-pressed", "false");
+    object360ReturnFocus?.focus();
+    object360ReturnFocus = null;
 }
 
+object360Close?.addEventListener("click", stopObject360);
+object360Modal?.addEventListener("click", event => {
+    if (event.target === object360Modal) stopObject360();
+});
+document.addEventListener("keydown", event => {
+    if (object360Modal?.hidden) return;
+    if (event.key === "Escape") {
+        event.preventDefault();
+        stopObject360();
+    } else if (event.key === "Tab") {
+        // Keep keyboard focus inside the modal.
+        event.preventDefault();
+        object360Close?.focus();
+    }
+});
 
 async function initHouseGallery() {
     if (!mainImage || !placeholder || !thumbnailsContainer || !viewButtons.length) {
@@ -38,73 +58,112 @@ async function initHouseGallery() {
         }
 
         const project = await response.json();
-        object360Button?.addEventListener("click", () => {
-            if (object360Instance) { stopObject360(); return; }
+        object360Button?.addEventListener("click", async () => {
+            if (document.fullscreenElement) await document.exitFullscreen();
+            if (!object360Modal || !object360Host || !object360Dialog) return;
+            if (!object360Modal.hidden) { stopObject360(); return; }
             const config = project.object360?.house;
             if (!config) { console.warn("Object360: конфигурация house отсутствует"); return; }
+            object360ReturnFocus = document.activeElement;
+            object360Modal.hidden = false;
+            document.body.classList.add("doma-object360-open");
+            object360Button.setAttribute("aria-pressed", "true");
+            object360Close?.focus();
             try {
-                object360Host.hidden = false;
-                visualContainer.classList.add("is-object360");
                 object360Instance = createObject360(object360Host, config, PROJECT_PATH);
-                object360Button.setAttribute("aria-pressed", "true");
-                object360Button.setAttribute("aria-label", "Вернуться к галерее");
-            } catch (error) { stopObject360(); console.error(error); }
+            } catch (error) {
+                stopObject360();
+                console.error(error);
+            }
         });
 
         let activeView = "exterior";
         let activeRoom = null;
         let activeImageIndex = 0;
+        const sync360 = () => { if (object360Button) object360Button.hidden = activeView !== "exterior"; };
 
         // Отображение основного изображения
 
 
 let imageRequestId = 0;
+let imageTransition = null;
+const mobileMedia = window.matchMedia("(max-width: 700px)");
+
+function clearImageTransition() {
+    if (!imageTransition) return;
+    clearTimeout(imageTransition.timer);
+    imageTransition.overlay.remove();
+    imageTransition = null;
+}
 
 function showImage(imagePath, alt) {
     const requestId = ++imageRequestId;
     const imageUrl = PROJECT_PATH + imagePath;
+    clearImageTransition();
 
     const preloadImage = new Image();
-
     preloadImage.onload = () => {
-        // Если пользователь уже выбрал другой кадр,
-        // результат предыдущей загрузки игнорируем.
         if (requestId !== imageRequestId) return;
+        const ratio = preloadImage.naturalWidth / preloadImage.naturalHeight;
+        const desktopFit = ratio >= 1.5 ? "cover" : "contain";
+        const preview = project.mobilePreviews?.[imagePath] ?? {};
+        const scale = Math.min(3, Math.max(1, Number(preview.scale) || 1));
+        const x = Math.min(100, Math.max(0, Number(preview.x ?? 50)));
+        const y = Math.min(100, Math.max(0, Number(preview.y ?? 50)));
 
-        const aspectRatio =
-            preloadImage.naturalWidth / preloadImage.naturalHeight;
-
-        const objectFit =
-            aspectRatio >= 1.5 ? "cover" : "contain";
-
-        // Сначала устанавливаем режим отображения,
-        // затем подменяем изображение.
-        mainImage.style.objectFit = window.matchMedia("(max-width: 700px)").matches
-            ? "cover"
-            : objectFit;
-        // Per-image mobile framing can be configured later without new renders.
-        mainImage.style.objectPosition = "50% 50%";
-        mainImage.src = imageUrl;
-        mainImage.alt = alt;
-        mainImage.style.display = "";
-
-        placeholder.hidden = true;
-        thumbnailsContainer.style.display = "";
+        function applyFraming(img) {
+            img.style.objectFit = mobileMedia.matches ? "cover" : desktopFit;
+            img.style.objectPosition = mobileMedia.matches ? `${x}% ${y}%` : "50% 50%";
+            img.style.transform = mobileMedia.matches ? `scale(${scale})` : "";
+        }
+        function commit() {
+            if (requestId !== imageRequestId) return;
+            mainImage.src = imageUrl;
+            mainImage.alt = alt;
+            applyFraming(mainImage);
+            mainImage.style.display = "";
+            placeholder.hidden = true;
+            thumbnailsContainer.style.display = "";
+        }
+        if (mainImage.style.display === "none" || !mainImage.complete || !mainImage.naturalWidth) {
+            commit();
+            return;
+        }
+        if (mainImage.currentSrc === new URL(imageUrl, document.baseURI).href) {
+            commit();
+            return;
+        }
+        const overlay = document.createElement("img");
+        overlay.className = "project-visual-image gallery-crossfade-image";
+        overlay.src = imageUrl;
+        overlay.alt = "";
+        overlay.setAttribute("aria-hidden", "true");
+        applyFraming(overlay);
+        visualContainer.appendChild(overlay);
+        const transition = { overlay, timer: null };
+        imageTransition = transition;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (requestId === imageRequestId && imageTransition === transition) {
+                overlay.classList.add("is-visible");
+            }
+        }));
+        transition.timer = setTimeout(() => {
+            if (requestId !== imageRequestId || imageTransition !== transition) return;
+            commit();
+            clearImageTransition();
+        }, 280);
     };
-
     preloadImage.onerror = () => {
-        if (requestId !== imageRequestId) return;
-
-        console.error("Не удалось загрузить изображение:", imageUrl);
+        if (requestId === imageRequestId) console.error("Не удалось загрузить изображение:", imageUrl);
     };
-
     preloadImage.src = imageUrl;
 }
 
 
-
         // Пустая категория
         function showPlaceholder() {
+            ++imageRequestId;
+            clearImageTransition();
             mainImage.style.display = "none";
             placeholder.hidden = false;
             thumbnailsContainer.style.display = "none";
@@ -152,6 +211,7 @@ function showImage(imagePath, alt) {
         function showGallery(view) {
             stopObject360();
             activeView = view;
+            sync360();
             activeRoom = null;
             activeImageIndex = 0;
 
@@ -301,53 +361,23 @@ function showImage(imagePath, alt) {
                     : project.gallery?.[activeView] ?? [];
                 if (!Array.isArray(images) || images.length < 2) return;
                 const next = (activeImageIndex + direction + images.length) % images.length;
-                const buttons = thumbnailsContainer.querySelectorAll(
-                    ".project-thumbnail:not(.project-thumbnail-back)"
-                );
-                buttons[next]?.click();
+                const buttons = thumbnailsContainer.querySelectorAll(".project-thumbnail:not(.project-thumbnail-back)");
+                if (buttons[next]) {
+                    buttons[next].click();
+                } else {
+                    showImage(images[next], `${project.name} — ракурс ${next + 1}`);
+                    activeImageIndex = next;
+                    document.dispatchEvent(new Event("doma:gallery-change"));
+                }
             }
         };
         document.dispatchEvent(new Event("doma:gallery-ready"));
 
-        // Стрелки в полноэкранном режиме
-        document.addEventListener("keydown", (event) => {
-            if (document.fullscreenElement !== visualContainer) {
-                return;
-            }
-
-            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
-                return;
-            }
-
-            let images = [];
-
-            if (activeView === "interior") {
-                if (!activeRoom) {
-                    return;
-                }
-
-                images =
-                    project.gallery?.interior?.[activeRoom]?.images ?? [];
-            } else {
-                images = project.gallery?.[activeView] ?? [];
-            }
-
-            if (!Array.isArray(images) || images.length < 2) {
-                return;
-            }
-
-            const direction = event.key === "ArrowRight" ? 1 : -1;
-
-            activeImageIndex =
-                (activeImageIndex + direction + images.length) %
-                images.length;
-
-            const thumbnails = thumbnailsContainer.querySelectorAll(
-                ".project-thumbnail:not(.project-thumbnail-back)"
-            );
-
-            thumbnails[activeImageIndex]?.click();
-
+        // Fullscreen: navigate only within the active category or room.
+        document.addEventListener("keydown", event => {
+            if (document.fullscreenElement !== visualContainer) return;
+            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+            window.domaGallery?.step(event.key === "ArrowRight" ? 1 : -1);
             event.preventDefault();
         });
 
@@ -388,7 +418,7 @@ if (visualContainer && fullscreenButton) {
 // On mobile, tapping the photo opens fullscreen; controls keep their own actions.
 if (mainImage && visualContainer) {
     mainImage.addEventListener("click", async () => {
-        if (!window.matchMedia("(max-width: 700px)").matches) return;
+        if (!window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches) return;
         if (document.fullscreenElement === visualContainer) return;
         try {
             await visualContainer.requestFullscreen();
@@ -466,25 +496,30 @@ function initMobileGallerySheet() {
                 img.loading = "lazy";
                 const label = document.createElement("span");
                 label.textContent = room.title;
-                button.append(img, label);
+                button.append(preview, label);
                 button.addEventListener("click", () => gallery.selectRoom(roomId));
                 items.appendChild(button);
             });
         } else {
             const images = project.gallery?.[activeView] ?? [];
-            if (!Array.isArray(images) || !images.length) {
-                const empty = document.createElement("p");
-                empty.className = "gallery-sheet-empty";
-                empty.textContent = "Материалы готовятся";
-                items.appendChild(empty);
-            }
+            const titles = { exterior: "Фасады", plans: "Планировки", surroundings: "Окружение" };
+            const button = document.createElement("div");
+            button.className = "gallery-sheet-item active";
+            const preview = document.createElement("div");
+            preview.className = "gallery-sheet-preview";
             if (Array.isArray(images) && images.length) {
-                const hint = document.createElement("p");
-                hint.className = "gallery-sheet-empty";
-                hint.textContent = "Листайте изображения свайпом влево или вправо";
-                items.appendChild(hint);
+                const img = document.createElement("img");
+                img.src = PROJECT_PATH + images[0];
+                img.alt = titles[activeView] || activeView;
+                preview.appendChild(img);
+            } else {
+                preview.classList.add("is-placeholder");
+                preview.textContent = "СКОРО";
             }
-            // For exterior, swipes replace thumbnails; no second thumbnail strip.
+            const label = document.createElement("span");
+            label.textContent = titles[activeView] || activeView;
+            button.append(preview, label);
+            items.appendChild(button);
         }
 
         const images = activeView === "interior"
@@ -511,14 +546,18 @@ function initMobileGallerySheet() {
     if (window.domaGallery) render();
 
     // Only horizontal swipes over the image area navigate photos.
-    let startX = 0, startY = 0;
+    let startX = 0, startY = 0, swipeArmed = false;
     visualContainer?.addEventListener("touchstart", event => {
-        if (event.touches.length !== 1 || event.target.closest("button, .gallery-sheet")) return;
+        if (event.touches.length !== 1 || event.target.closest("button, .gallery-sheet, .gallery-landscape-albums")) return;
+        if (window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)").matches && !event.target.closest(".project-visual-image, .project-gallery-placeholder")) return;
+        swipeArmed = true;
         startX = event.touches[0].clientX;
         startY = event.touches[0].clientY;
     }, { passive: true });
     visualContainer?.addEventListener("touchend", event => {
-        if (event.changedTouches.length !== 1 || event.target.closest("button, .gallery-sheet")) return;
+        if (!swipeArmed || event.changedTouches.length !== 1 || event.target.closest("button, .gallery-sheet, .gallery-landscape-albums")) return;
+        swipeArmed = false;
+        if (window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)").matches && !event.target.closest(".project-visual-image, .project-gallery-placeholder")) return;
         const dx = event.changedTouches[0].clientX - startX;
         const dy = event.changedTouches[0].clientY - startY;
         if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
@@ -528,3 +567,86 @@ function initMobileGallerySheet() {
 }
 
 initMobileGallerySheet();
+
+
+// Unified album strip for touch landscape; source of truth remains project.json.
+function initLandscapeAlbums() {
+    const sidebar = document.querySelector(".gallery-landscape-albums");
+    if (!sidebar) return;
+    const list = sidebar.querySelector(".gallery-landscape-list");
+    if (!list) return;
+    const names = { exterior: "Фасады", plans: "Планировки", surroundings: "Окружение" };
+
+    let signature = "";
+
+    function getAlbums(project) {
+        const gallery = project.gallery || {};
+        const result = [];
+        for (const [view, data] of Object.entries(gallery)) {
+            if (view === "interior") {
+                for (const [roomId, room] of Object.entries(data || {})) {
+                    if (!Array.isArray(room.images) || !room.images.length) continue;
+                    result.push({ view, roomId, title: room.title || roomId, image: room.images[0] });
+                }
+            } else {
+                result.push({ view, roomId: null, title: names[view] || view,
+                    image: Array.isArray(data) && data.length ? data[0] : null });
+            }
+        }
+        return result;
+    }
+
+    function render() {
+        const api = window.domaGallery;
+        if (!api) return;
+        const albums = getAlbums(api.project);
+        const nextSignature = albums.map(a => `${a.view}:${a.roomId}:${a.image}`).join("|");
+        if (signature !== nextSignature) {
+            signature = nextSignature;
+            list.replaceChildren();
+            albums.forEach(album => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "gallery-landscape-album";
+                button.dataset.view = album.view;
+                button.dataset.room = album.roomId || "";
+                button.setAttribute("aria-label", album.title);
+                const preview = document.createElement("div");
+                preview.className = "gallery-landscape-preview";
+                if (album.image) {
+                    const img = document.createElement("img");
+                    img.src = PROJECT_PATH + album.image;
+                    img.alt = "";
+                    img.loading = "lazy";
+                    preview.appendChild(img);
+                } else {
+                    preview.classList.add("is-placeholder");
+                    preview.textContent = "СКОРО";
+                }
+                const label = document.createElement("span");
+                label.textContent = album.title;
+                button.append(preview, label);
+                button.addEventListener("click", () => {
+                    if (album.view === "interior") {
+                        if (api.getState().activeView !== "interior") api.selectView("interior");
+                        api.selectRoom(album.roomId);
+                    } else {
+                        api.selectView(album.view);
+                    }
+                });
+                list.appendChild(button);
+            });
+        }
+        const { activeView, activeRoom } = api.getState();
+        list.querySelectorAll(".gallery-landscape-album").forEach(button => {
+            const selected = button.dataset.view === activeView &&
+                (activeView !== "interior" || button.dataset.room === activeRoom);
+            button.classList.toggle("active", selected);
+            button.setAttribute("aria-current", selected ? "true" : "false");
+        });
+    }
+    document.addEventListener("doma:gallery-ready", render);
+    document.addEventListener("doma:gallery-change", render);
+    if (window.domaGallery) render();
+}
+initLandscapeAlbums();

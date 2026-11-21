@@ -1496,47 +1496,83 @@
     }
 }
 
-/* DOMA Object360: isolated viewer mode */
+/* Object360 modal, outside the gallery */
+.doma-object360-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background: rgba(80, 80, 80, .5);
+    animation: doma360-backdrop .22s ease-out both;
+}
+
+.doma-object360-modal[hidden] { display: none; }
+body.doma-object360-open { overflow: hidden; }
+
+.doma-object360-dialog {
+    position: relative;
+    width: min(80vw, 1500px, calc(80dvh * 16 / 9));
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: 0 20px 70px rgba(0, 0, 0, .28);
+    animation: doma360-enter .25s cubic-bezier(.2, .8, .2, 1) both;
+}
+
 .doma-object360-host {
     position: absolute;
     inset: 0;
-    z-index: 1;
-    background: #202020;
-}
-
-.doma-object360-host[hidden] {
-    display: none;
+    background: transparent;
 }
 
 .doma-object360-canvas {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
-    object-fit: contain;
-    touch-action: pan-y;
+    touch-action: none;
     cursor: grab;
 }
+.doma-object360-canvas:active { cursor: grabbing; }
 
-.doma-object360-canvas:active {
-    cursor: grabbing;
+.doma-object360-close {
+    position: absolute;
+    z-index: 2;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid #ffffff80;
+    border-radius: 50%;
+    background: #171717b8;
+    color: #fff;
+    font: 30px/1 Arial, sans-serif;
+    cursor: pointer;
 }
+.doma-object360-close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 .doma-object360-status {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: #fff;
     padding: 12px 16px;
     border-radius: 10px;
     background: #222b;
     font-size: 14px;
     pointer-events: none;
 }
-
-.doma-object360-status[hidden] {
-    display: none;
-}
+.doma-object360-status[hidden] { display: none; }
 
 .project-object360-toggle {
     flex: 0 0 44px;
@@ -1546,27 +1582,34 @@
     border-radius: 50%;
     background: #0007;
     color: #fff;
-    font: 600 12px inherit;
+    font: 600 12px Arial, sans-serif;
     cursor: pointer;
 }
 
-.project-object360-toggle[aria-pressed="true"] {
-    background: #fff;
-    color: #171717;
+@keyframes doma360-backdrop { from { opacity: 0; } to { opacity: 1; } }
+@keyframes doma360-enter {
+    from { opacity: 0; transform: translateY(14px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.project-visual.is-object360 .project-thumbnails,
-.project-visual.is-object360 .gallery-progress {
-    visibility: hidden;
-    pointer-events: none;
+@media (max-width: 700px) {
+    .doma-object360-modal { padding: 0; }
+    .doma-object360-dialog {
+        width: 100vw;
+        height: 94vh;
+        height: 94dvh;
+        aspect-ratio: auto;
+        border-radius: 12px;
+    }
+    .house-page .gallery-progress-dots {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
-.project-visual.is-object360 .project-visual-bottom {
-    justify-content: flex-end;
-}
-
-.project-visual.is-object360 .gallery-sheet-items {
-    visibility: hidden;
+@media (prefers-reduced-motion: reduce) {
+    .doma-object360-modal, .doma-object360-dialog { animation: none; }
 }
 
 .project-visual-menu button:not(.active) {
@@ -1578,21 +1621,441 @@
 }
 
 /* Keep 360° button next to fullscreen */
-.project-object360-toggle {
-    margin-left: auto;
+.project-object360-toggle { margin-left: auto; }
+
+/* Gallery fullscreen and Object360 modal are separate modes. */
+.project-visual:fullscreen .project-object360-toggle { display: none; }
+
+/* Gallery crossfade overlay: same geometry as the main preview. */
+.project-visual .gallery-crossfade-image {
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease;
+}
+.project-visual .gallery-crossfade-image.is-visible { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .project-visual .gallery-crossfade-image { transition: none; }
 }
 
-@media (max-width:700px) {
-    .project-visual-bottom {
-        gap: 10px;
-    }
+/* DOMA mobile gallery v4: fixed 4:5 portrait frame, landscape viewer. */
+.project-visual::after { display: none; }
 
-    .project-object360-toggle {
-        width: 44px;
-        height: 44px;
+/* Portrait: the navigation panel has its own space, below the 4:5 image. */
+@media (max-width: 700px) and (orientation: portrait) {
+    .house-page .project-visual:not(:fullscreen) {
+        height: calc(125vw + var(--gallery-panel-height, 230px));
+        min-height: 0;
+        max-height: none;
+        overflow: hidden;
     }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image {
+        top: 0;
+        bottom: auto;
+        height: 125vw;
+        object-fit: cover !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-sheet {
+        position: absolute;
+        top: 125vw;
+        bottom: auto;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+        width: 100%;
+        transform: none;
+        border-radius: 22px 22px 0 0;
+        box-shadow: none;
+        overflow: visible;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-sheet-content {
+        overflow: visible;
+        padding-bottom: 20px;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress,
+    .house-page .project-visual:not(:fullscreen) .project-visual-bottom {
+        bottom: calc(var(--gallery-panel-height, 230px) + 12px);
+    }
+}
 
-    .project-visual.is-object360 .doma-object360-canvas {
-        touch-action: none;
+/* Phone landscape: keep the header over the image and navigation on the left. */
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+    .house-page .site-wrapper { position: relative; }
+    .house-page .site-header {
+        position: absolute;
+        inset: 0 0 auto;
+        height: 54px;
+        z-index: 15;
+        background: transparent;
+        border: 0;
     }
+    .house-page .header-container { padding-inline: max(16px, env(safe-area-inset-left)); }
+    .house-page .logo { color: #fff; text-shadow: 0 1px 8px #0009; }
+    .house-page .mobile-menu { display: block; }
+    .house-page .mobile-menu summary span { background: #fff; }
+    .house-page .header-nav,
+    .house-page .header-button { display: none; }
+    .house-page .project-page { padding: 0 0 24px; height: auto; }
+    .house-page .project-breadcrumbs { display: none; }
+    .house-page .project-overview { display: flex; flex-direction: column; gap: 16px; }
+    .house-page .project-visual:not(:fullscreen) {
+        height: 100dvh;
+        min-height: 0;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
+    }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image {
+        width: 100%;
+        height: 100%;
+        inset: 0;
+        object-fit: contain !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-sheet { display: none; }
+    .house-page .project-visual:not(:fullscreen) .project-visual-menu {
+        position: absolute;
+        top: 64px;
+        bottom: 54px;
+        left: max(12px, env(safe-area-inset-left));
+        right: auto;
+        width: 116px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: transparent;
+        z-index: 6;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-visual-menu button {
+        flex: 0 0 auto;
+        padding: 9px 8px;
+        text-align: left;
+        border-radius: 8px;
+        background: #1717179c;
+        color: #fff;
+        font-size: 12px;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-visual-menu button.active {
+        background: #fff;
+        color: #171717;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress {
+        display: flex;
+        position: absolute;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        left: max(16px, env(safe-area-inset-left));
+        right: 132px;
+        z-index: 5;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-visual-bottom {
+        position: absolute;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        right: max(16px, env(safe-area-inset-right));
+        left: auto;
+        top: auto;
+        z-index: 5;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-thumbnails { display: none !important; }
+    .house-page .project-visual:fullscreen .gallery-sheet { display: none; }
+}
+
+/* Unified albums: portrait keeps its bottom sheet; landscape uses one vertical strip. */
+.gallery-landscape-albums { display: none; }
+.project-object360-toggle[hidden] { display: none !important; }
+.project-visual:fullscreen .project-object360-toggle { display: none !important; }
+
+@media (max-width: 700px) and (orientation: portrait) {
+    .house-page .project-visual:not(:fullscreen) {
+        border-radius: 0;
+        min-height: 100dvh;
+        height: max(100dvh, calc(125vw + var(--gallery-panel-height, 230px)));
+    }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image,
+    .house-page .project-visual:not(:fullscreen) > .gallery-crossfade-image { border-radius: 0; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+    .house-page .project-visual:not(:fullscreen) { position: relative; overflow: hidden; }
+    .house-page .project-visual:not(:fullscreen) .project-visual-menu { display: none !important; }
+    .house-page .project-visual:not(:fullscreen) .gallery-landscape-albums {
+        position: absolute;
+        display: block;
+        z-index: 8;
+        left: 0;
+        top: 55px;
+        bottom: 0;
+        width: clamp(106px, 20vw, 172px);
+        padding: 6px 8px max(12px, env(safe-area-inset-bottom));
+        box-sizing: border-box;
+        background: rgba(22,22,22,.82);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        scrollbar-width: thin;
+    }
+    .house-page .gallery-landscape-list { display: flex; flex-direction: column; gap: 10px; }
+    .house-page .gallery-landscape-album {
+        display: flex; flex-direction: column; gap: 4px;
+        padding: 4px; width: 100%;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        background: transparent; color: white;
+        font: inherit; font-size: 11px;
+        cursor: pointer;
+    }
+    .house-page .gallery-landscape-album.active { border-color: white; background: #ffffff20; }
+    .house-page .gallery-landscape-album img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; }
+    .house-page .gallery-landscape-album span { text-align: center; }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image,
+    .house-page .project-visual:not(:fullscreen) > .gallery-crossfade-image {
+        left: clamp(106px, 20vw, 172px);
+        right: 0;
+        width: calc(100% - clamp(106px, 20vw, 172px));
+        height: 100%;
+        object-fit: contain !important;
+        transform: none !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress {
+        display: flex !important;
+        position: absolute;
+        left: clamp(106px, 20vw, 172px);
+        right: 0;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        width: auto;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 9;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress-count { display: none !important; }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress-dots {
+        position: static;
+        transform: none;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-visual-bottom {
+        display: flex !important;
+        position: absolute;
+        left: auto; right: max(12px, env(safe-area-inset-right));
+        bottom: max(10px, env(safe-area-inset-bottom));
+        width: auto; z-index: 10;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-thumbnails { display: none !important; }
+    .house-page .project-visual:not(:fullscreen) .project-object360-toggle { margin-left: 0; }
+    .house-page .project-visual:not(:fullscreen) .gallery-sheet { display: none !important; }
+}
+
+/* DOMA v6 — mobile layout corrections. Desktop remains unchanged. */
+@media (max-width: 700px) and (orientation: portrait) {
+    .house-page .project-visual:not(:fullscreen) {
+        border-radius: 0 !important;
+        overflow: hidden;
+        background: #fff;
+    }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image,
+    .house-page .project-visual:not(:fullscreen) > .gallery-crossfade-image {
+        border-radius: 0 !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-sheet {
+        border-radius: 0 !important;
+        overflow: visible;
+        background: #fff;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress {
+        position: absolute !important;
+        left: 14px !important;
+        right: 14px !important;
+        top: calc(125vw - 55px) !important;
+        bottom: auto !important;
+        height: 42px;
+        width: auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        z-index: 9;
+        pointer-events: none;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress-count { display: none !important; }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress-dots {
+        position: static !important;
+        transform: none !important;
+        margin: 0 auto;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-visual-bottom {
+        position: absolute !important;
+        top: calc(125vw - 57px) !important;
+        bottom: auto !important;
+        right: 14px !important;
+        left: auto !important;
+        z-index: 10;
+    }
+    .house-page .gallery-sheet-items {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 5px 5px 12px !important;
+        scroll-padding-inline: 5px;
+    }
+    .house-page .gallery-sheet-item { text-align: center; }
+    .house-page .gallery-sheet-item span {
+        text-align: center !important;
+        text-transform: uppercase;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        font-size: 11px;
+    }
+    .house-page .gallery-sheet-item img,
+    .house-page .gallery-sheet-preview { width: 100%; aspect-ratio: 1; border-radius: 10px; }
+    .house-page .gallery-sheet-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .house-page .gallery-sheet-preview.is-placeholder {
+        display: grid; place-items: center; background: #e7e7e7;
+        color: #888; font-size: 11px; letter-spacing: .06em;
+    }
+    .house-page .gallery-sheet-item.active .gallery-sheet-preview { outline: 2px solid #171717; }
+    .house-page .gallery-sheet-content { padding-inline: 20px; }
+    .house-page .gallery-vr-placeholder {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 7px; margin-top: 18px; padding: 20px 12px;
+        border: 1px dashed #d4d4d4; border-radius: 12px;
+        color: #888; background: #fafafa; text-align: center;
+    }
+    .house-page .gallery-vr-placeholder-icon { font-size: 24px; }
+    .house-page .gallery-vr-placeholder strong { color: #555; font-size: 14px; }
+    .house-page .gallery-vr-placeholder small { font-size: 10px; }
+}
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+    .house-page .site-header {
+        left: 0 !important; right: auto !important;
+        width: 110px !important; height: 60px !important;
+        background: #292929 !important;
+        z-index: 30 !important;
+    }
+    .house-page .header-container { padding: 0 9px !important; height: 60px; }
+    .house-page .logo { font-size: 17px; white-space: nowrap; }
+    .house-page .site-header .mobile-menu { display: block !important; position: fixed; right: max(15px, env(safe-area-inset-right)); top: 13px; z-index: 50; }
+    .house-page .site-header .mobile-menu summary { display: flex !important; flex-direction: column; gap: 5px; align-items: center; justify-content: center; width: 34px; height: 34px; font-size: 0; list-style: none; }
+    .house-page .site-header .mobile-menu summary::-webkit-details-marker { display: none; }
+    .house-page .site-header .mobile-menu summary span { display: block !important; width: 23px; height: 2px; background: white !important; }
+    .house-page .project-visual:not(:fullscreen) { background: #292929 !important; border-radius: 0 !important; }
+    .house-page .project-visual:not(:fullscreen) .gallery-landscape-albums {
+        top: 60px !important; width: 110px !important;
+        background: #292929 !important; padding: 5px 7px 14px !important;
+    }
+    .house-page .gallery-landscape-list { gap: 8px; }
+    .house-page .gallery-landscape-album { padding: 3px; gap: 4px; }
+    .house-page .gallery-landscape-preview { width: 100%; aspect-ratio: 1; border-radius: 5px; overflow: hidden; }
+    .house-page .gallery-landscape-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .house-page .gallery-landscape-preview.is-placeholder { display: grid; place-items: center; background: #555; color: #ccc; font-size: 10px; }
+    .house-page .gallery-landscape-album span { text-align: center !important; text-transform: uppercase; font-size: 10px; overflow-wrap: anywhere; }
+    .house-page .project-visual:not(:fullscreen) > .project-visual-image,
+    .house-page .project-visual:not(:fullscreen) > .gallery-crossfade-image {
+        left: 110px !important; right: 0 !important; top: 0 !important; bottom: 0 !important;
+        width: calc(100% - 110px) !important; height: 100% !important;
+        object-fit: cover !important; border-radius: 0 !important;
+        background: #292929 !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .project-gallery-placeholder {
+        left: 110px !important; right: 0 !important; width: calc(100% - 110px) !important;
+        background: #292929 !important;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress {
+        left: 110px !important; right: 0 !important; bottom: 12px !important;
+        justify-content: center !important; z-index: 9;
+    }
+    .house-page .project-visual:not(:fullscreen) .gallery-progress-dots { margin: 0 auto; }
+    .house-page .project-visual:not(:fullscreen) .project-visual-bottom { right: 12px !important; bottom: 10px !important; }
+    .house-page .gallery-vr-placeholder { display: none !important; }
+    .house-page .project-visual:fullscreen > .project-visual-image { object-fit: contain !important; }
+}
+
+
+/* v7: fullscreen is an image-only presentation, not the gallery UI. */
+.house-page .project-visual:fullscreen {
+    border-radius: 0 !important;
+    clip-path: none !important;
+    background: #171717;
+}
+.house-page .project-visual:fullscreen .project-visual-menu,
+.house-page .project-visual:fullscreen .gallery-landscape-albums,
+.house-page .project-visual:fullscreen .gallery-sheet,
+.house-page .project-visual:fullscreen .project-thumbnails,
+.house-page .project-visual:fullscreen .project-object360-toggle {
+    display: none !important;
+}
+.house-page .project-visual:fullscreen > .project-visual-image,
+.house-page .project-visual:fullscreen > .gallery-crossfade-image {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    transform: none !important;
+    border-radius: 0 !important;
+}
+.house-page .project-visual:fullscreen .gallery-progress {
+    display: flex !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    width: 100% !important;
+    justify-content: center !important;
+    z-index: 9;
+    pointer-events: none;
+}
+.house-page .project-visual:fullscreen .gallery-progress-count { display: none !important; }
+.house-page .project-visual:fullscreen .gallery-progress-dots {
+    display: flex !important;
+    position: static !important;
+    transform: none !important;
+    margin: 0 auto !important;
+    align-items: center;
+    gap: 6px;
+}
+.house-page .project-visual:fullscreen .gallery-progress-dot {
+    display: block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ffffff80;
+}
+.house-page .project-visual:fullscreen .gallery-progress-dot.active {
+    width: 8px; height: 8px; background: #fff;
+}
+.house-page .project-visual:fullscreen .project-visual-bottom {
+    display: flex !important;
+    position: absolute !important;
+    top: auto !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    left: auto !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    z-index: 10;
+}
+
+/* v7: landscape navigation dropdown and square frame corners. */
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+    .house-page .project-visual:not(:fullscreen) {
+        clip-path: none !important;
+        border-radius: 0 !important;
+    }
+    .house-page .site-header .mobile-menu[open] nav {
+        display: flex !important;
+        position: fixed;
+        top: 55px;
+        right: max(12px, env(safe-area-inset-right));
+        z-index: 60;
+        flex-direction: column;
+        gap: 0;
+        min-width: 190px;
+        padding: 8px;
+        background: #292929f5;
+        border: 1px solid #ffffff30;
+        border-radius: 8px;
+        box-shadow: 0 12px 30px #0005;
+    }
+    .house-page .site-header .mobile-menu[open] nav a {
+        display: block;
+        padding: 11px 12px;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+    }
+    .house-page .site-header .mobile-menu[open] nav a:hover { background: #ffffff20; }
 }

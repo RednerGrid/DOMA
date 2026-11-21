@@ -68,7 +68,6 @@
 
                     <img src="./assets/images/house-preview.jpg" alt="Барнхаус 80 — экстерьер"
                         class="project-visual-image">
-                    <div class="doma-object360-host" hidden></div>
                     <div class="project-gallery-placeholder" hidden>
                         <span>Материалы уточняются</span>
                     </div>
@@ -95,12 +94,22 @@
                     </div>
 
 
+                    <!-- TOUCH LANDSCAPE: SINGLE VERTICAL ALBUM STRIP -->
+                    <nav class="gallery-landscape-albums" aria-label="Альбомы проекта">
+                        <div class="gallery-landscape-list"></div>
+                    </nav>
+
                     <!-- MOBILE GALLERY BOTTOM SHEET -->
                     <section class="gallery-sheet" aria-label="Исследовать дом">
                         <h2 class="gallery-sheet-title">Исследовать дом</h2>
                         <div class="gallery-sheet-content" id="gallery-sheet-content">
                             <div class="gallery-sheet-categories" aria-label="Разделы галереи"></div>
                             <div class="gallery-sheet-items" aria-label="Комнаты и изображения"></div>
+                            <div class="gallery-vr-placeholder" aria-disabled="true">
+                                <span class="gallery-vr-placeholder-icon">◎</span>
+                                <strong>VR-ТУР</strong>
+                                <small>ИНТЕРАКТИВНЫЙ ПРОСМОТР — СКОРО</small>
+                            </div>
                         </div>
                     </section>
 
@@ -442,6 +451,13 @@
 
         </main>
 
+    </div>
+    <!-- Object360 modal: independent of gallery layout -->
+    <div class="doma-object360-modal" hidden>
+        <div class="doma-object360-dialog" role="dialog" aria-modal="true" aria-label="Облёт дома 360°" tabindex="-1">
+            <button type="button" class="doma-object360-close" aria-label="Закрыть просмотр 360°">×</button>
+            <div class="doma-object360-host"></div>
+        </div>
     </div>
     <script type="module" src="./js/houseGallery.js"></script>
 </body>
