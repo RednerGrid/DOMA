@@ -20,3 +20,7 @@ node_modules/
 
 # Build output
 dist/
+
+# Object360 source frames
+/projects/barn80/assets/object360/house/frame_*.jpg
+/projects/barn80/assets/object360/house/frames.txt

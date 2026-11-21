@@ -1,44 +1,58 @@
 {
-    "id": "barn80",
-    "name": "Барнхаус 80",
-    "gallery": {
-        "exterior": [
-            "images/exterior-01.jpg",
-            "images/exterior-02.jpg",
-            "images/exterior-03.jpg",
-            "images/exterior-04.jpg",
-            "images/exterior-05.jpg"
-        ],
-        "interior": {
-            "living": {
-                "title": "Гостиная",
-                "images": [
-                    "images/interior/living/living-01.png",
-                    "images/interior/living/living-02.png",
-                    "images/interior/living/living-03.png",
-                    "images/interior/living/living-04.png",
-                    "images/interior/living/living-05.png"
-                ]
-            },
-            "bedroom": {
-                "title": "Спальня",
-                "images": [
-                    "images/interior/bedroom1/bedroom1-01.png",
-                    "images/interior/bedroom1/bedroom1-02.png"
-                ]
-            },
-            "bathroom": {
-                "title": "Санузел",
-                "images": [
-                    "images/interior/bathroom/bathroom-01.jpg",
-                    "images/interior/bathroom/bathroom-02.jpg",
-                    "images/interior/bathroom/bathroom-03.jpg",
-                    "images/interior/bathroom/bathroom-04.jpg",
-                    "images/interior/bathroom/bathroom-05.jpg"
-                ]
-            }
-        },
-        "plans": [],
-        "surroundings": []
+  "id": "barn80",
+  "name": "Барнхаус 80",
+  "gallery": {
+    "exterior": [
+      "images/exterior-01.jpg",
+      "images/exterior-02.jpg",
+      "images/exterior-03.jpg",
+      "images/exterior-04.jpg",
+      "images/exterior-05.jpg"
+    ],
+    "interior": {
+      "living": {
+        "title": "Гостиная",
+        "images": [
+          "images/interior/living/living-01.png",
+          "images/interior/living/living-02.png",
+          "images/interior/living/living-03.png",
+          "images/interior/living/living-04.png",
+          "images/interior/living/living-05.png"
+        ]
+      },
+      "bedroom": {
+        "title": "Спальня",
+        "images": [
+          "images/interior/bedroom1/bedroom1-01.png",
+          "images/interior/bedroom1/bedroom1-02.png"
+        ]
+      },
+      "bathroom": {
+        "title": "Санузел",
+        "images": [
+          "images/interior/bathroom/bathroom-01.jpg",
+          "images/interior/bathroom/bathroom-02.jpg",
+          "images/interior/bathroom/bathroom-03.jpg",
+          "images/interior/bathroom/bathroom-04.jpg",
+          "images/interior/bathroom/bathroom-05.jpg"
+        ]
+      }
+    },
+    "plans": [],
+    "surroundings": []
+  },
+  "object360": {
+    "house": {
+      "title": "Дом",
+      "path": "assets/object360/house/",
+      "framePrefix": "frame_",
+      "extension": "jpg",
+      "padding": 4,
+      "startFrame": 0,
+      "frameCount": 179,
+      "source": "video",
+      "file": "assets/object360/house/360-house_fhd_allintra_crf20_bt709.mp4",
+      "fps": 25
     }
+  }
 }

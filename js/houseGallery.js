@@ -1,3 +1,5 @@
+import { createObject360 } from "./viewers/object360.js";
+
 
 const PROJECT_PATH = "./projects/barn80/";
 
@@ -8,6 +10,20 @@ const viewButtons = document.querySelectorAll(".project-visual-menu button");
 
 const visualContainer = document.querySelector(".project-visual");
 const fullscreenButton = document.querySelector(".project-fullscreen");
+const object360Button = document.querySelector(".project-object360-toggle");
+const object360Host = document.querySelector(".doma-object360-host");
+let object360Instance = null;
+
+function stopObject360() {
+    if (!object360Instance) return;
+    object360Instance.destroy();
+    object360Instance = null;
+    object360Host.hidden = true;
+    visualContainer.classList.remove("is-object360");
+    object360Button.setAttribute("aria-pressed", "false");
+    object360Button.setAttribute("aria-label", "Включить облёт 360°");
+}
+
 
 async function initHouseGallery() {
     if (!mainImage || !placeholder || !thumbnailsContainer || !viewButtons.length) {
@@ -22,6 +38,18 @@ async function initHouseGallery() {
         }
 
         const project = await response.json();
+        object360Button?.addEventListener("click", () => {
+            if (object360Instance) { stopObject360(); return; }
+            const config = project.object360?.house;
+            if (!config) { console.warn("Object360: конфигурация house отсутствует"); return; }
+            try {
+                object360Host.hidden = false;
+                visualContainer.classList.add("is-object360");
+                object360Instance = createObject360(object360Host, config, PROJECT_PATH);
+                object360Button.setAttribute("aria-pressed", "true");
+                object360Button.setAttribute("aria-label", "Вернуться к галерее");
+            } catch (error) { stopObject360(); console.error(error); }
+        });
 
         let activeView = "exterior";
         let activeRoom = null;
@@ -122,6 +150,7 @@ function showImage(imagePath, alt) {
 
         // Обычная галерея: экстерьер, планы, окружение
         function showGallery(view) {
+            stopObject360();
             activeView = view;
             activeRoom = null;
             activeImageIndex = 0;
@@ -206,6 +235,7 @@ function showImage(imagePath, alt) {
 
         // Уровень 2: рендеры выбранной комнаты
         function showRoomGallery(roomId) {
+            stopObject360();
             const room = project.gallery?.interior?.[roomId];
 
             if (!room || !Array.isArray(room.images) || !room.images.length) {
