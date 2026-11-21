@@ -3,6 +3,28 @@ import { createObject360 } from "./viewers/object360.js";
 
 const PROJECT_PATH = "./projects/barn80/";
 
+// Shared by portrait sheet and landscape album strip.
+// Explicit poster wins; a predictable local JPEG is used for the house MP4.
+function object360Preview(config, project, key) {
+    if (config.preview) return config.preview;
+    if (key === "house") return "images/360/house-preview.jpg";
+    if (config.source === "video" || !config.path) return project.gallery?.exterior?.[0] || null;
+    const frame = config.startFrame ?? 0;
+    const filename = `${config.framePrefix || "frame_"}${String(frame).padStart(config.padding ?? 4, "0")}.${config.extension || "jpg"}`;
+    return `${config.path.replace(/\/?$/, "/")}${filename}`;
+}
+
+function makeGalleryPreview(path, fallbackPath) {
+    const img = document.createElement("img");
+    img.src = PROJECT_PATH + path;
+    img.alt = "";
+    img.loading = "lazy";
+    if (fallbackPath && fallbackPath !== path) {
+        img.addEventListener("error", () => { img.src = PROJECT_PATH + fallbackPath; }, { once: true });
+    }
+    return img;
+}
+
 const mainImage = document.querySelector(".project-visual-image");
 const placeholder = document.querySelector(".project-gallery-placeholder");
 const thumbnailsContainer = document.querySelector(".project-thumbnails");
@@ -10,40 +32,17 @@ const viewButtons = document.querySelectorAll(".project-visual-menu button");
 
 const visualContainer = document.querySelector(".project-visual");
 const fullscreenButton = document.querySelector(".project-fullscreen");
-const object360Button = document.querySelector(".project-object360-toggle");
-const object360Modal = document.querySelector(".doma-object360-modal");
-const object360Dialog = document.querySelector(".doma-object360-dialog");
-const object360Host = document.querySelector(".doma-object360-host");
-const object360Close = document.querySelector(".doma-object360-close");
+const object360Host = document.querySelector(".doma-object360-inline");
+const landscapeMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)");
 let object360Instance = null;
-let object360ReturnFocus = null;
-
+let object360Key = null;
 function stopObject360() {
-    if (object360Modal?.hidden) return;
     object360Instance?.destroy();
     object360Instance = null;
-    object360Modal.hidden = true;
-    document.body.classList.remove("doma-object360-open");
-    object360Button?.setAttribute("aria-pressed", "false");
-    object360ReturnFocus?.focus();
-    object360ReturnFocus = null;
+    object360Key = null;
+    if (object360Host) { object360Host.hidden = true; object360Host.replaceChildren(); }
+    visualContainer?.classList.remove("is-object360");
 }
-
-object360Close?.addEventListener("click", stopObject360);
-object360Modal?.addEventListener("click", event => {
-    if (event.target === object360Modal) stopObject360();
-});
-document.addEventListener("keydown", event => {
-    if (object360Modal?.hidden) return;
-    if (event.key === "Escape") {
-        event.preventDefault();
-        stopObject360();
-    } else if (event.key === "Tab") {
-        // Keep keyboard focus inside the modal.
-        event.preventDefault();
-        object360Close?.focus();
-    }
-});
 
 async function initHouseGallery() {
     if (!mainImage || !placeholder || !thumbnailsContainer || !viewButtons.length) {
@@ -58,29 +57,35 @@ async function initHouseGallery() {
         }
 
         const project = await response.json();
-        object360Button?.addEventListener("click", async () => {
-            if (document.fullscreenElement) await document.exitFullscreen();
-            if (!object360Modal || !object360Host || !object360Dialog) return;
-            if (!object360Modal.hidden) { stopObject360(); return; }
-            const config = project.object360?.house;
-            if (!config) { console.warn("Object360: конфигурация house отсутствует"); return; }
-            object360ReturnFocus = document.activeElement;
-            object360Modal.hidden = false;
-            document.body.classList.add("doma-object360-open");
-            object360Button.setAttribute("aria-pressed", "true");
-            object360Close?.focus();
-            try {
-                object360Instance = createObject360(object360Host, config, PROJECT_PATH);
-            } catch (error) {
-                stopObject360();
-                console.error(error);
-            }
-        });
-
         let activeView = "exterior";
         let activeRoom = null;
         let activeImageIndex = 0;
-        const sync360 = () => { if (object360Button) object360Button.hidden = activeView !== "exterior"; };
+        const objects360 = Object.entries(project.object360 || {}).filter(([, config]) => config && (config.path || config.file));
+        const object360Labels = { house: "Дом 360°", bath: "Баня 360°", sauna: "Баня 360°" };
+        const firstObjectKey = objects360[0]?.[0] ?? null;
+
+        function selectObject360(key = firstObjectKey) {
+            const config = project.object360?.[key];
+            if (!config || !object360Host) return;
+            if (activeView === "object360" && object360Key === key && object360Instance) return;
+            stopObject360();
+            activeView = "object360";
+            activeRoom = null;
+            activeImageIndex = 0;
+            object360Key = key;
+            ++imageRequestId;
+            clearImageTransition();
+            mainImage.style.display = "none";
+            placeholder.hidden = true;
+            thumbnailsContainer.style.display = "none";
+            object360Host.hidden = false;
+            visualContainer.classList.add("is-object360");
+            try { object360Instance = createObject360(object360Host, config, PROJECT_PATH); }
+            catch (error) { console.error(error); stopObject360(); }
+            document.dispatchEvent(new Event("doma:gallery-change"));
+        }
+        // Hide the 360° tab if this project has no configured objects.
+        viewButtons.forEach(button => { if (button.dataset.view === "object360") button.hidden = !firstObjectKey; });
 
         // Отображение основного изображения
 
@@ -112,9 +117,9 @@ function showImage(imagePath, alt) {
         const y = Math.min(100, Math.max(0, Number(preview.y ?? 50)));
 
         function applyFraming(img) {
-            img.style.objectFit = mobileMedia.matches ? "cover" : desktopFit;
-            img.style.objectPosition = mobileMedia.matches ? `${x}% ${y}%` : "50% 50%";
-            img.style.transform = mobileMedia.matches ? `scale(${scale})` : "";
+            img.style.objectFit = document.fullscreenElement === visualContainer && !landscapeMedia.matches ? "contain" : (mobileMedia.matches ? "cover" : desktopFit);
+            img.style.objectPosition = document.fullscreenElement === visualContainer ? "50% 50%" : (mobileMedia.matches ? `${x}% ${y}%` : "50% 50%");
+            img.style.transform = document.fullscreenElement === visualContainer ? "none" : (mobileMedia.matches ? `scale(${scale})` : "");
         }
         function commit() {
             if (requestId !== imageRequestId) return;
@@ -151,7 +156,7 @@ function showImage(imagePath, alt) {
             if (requestId !== imageRequestId || imageTransition !== transition) return;
             commit();
             clearImageTransition();
-        }, 280);
+        }, 420);
     };
     preloadImage.onerror = () => {
         if (requestId === imageRequestId) console.error("Не удалось загрузить изображение:", imageUrl);
@@ -209,14 +214,14 @@ function showImage(imagePath, alt) {
 
         // Обычная галерея: экстерьер, планы, окружение
         function showGallery(view) {
-            stopObject360();
+            if (view !== "object360") stopObject360();
             activeView = view;
-            sync360();
             activeRoom = null;
             activeImageIndex = 0;
 
             thumbnailsContainer.replaceChildren();
 
+            if (view === "object360") { selectObject360(); return; }
             if (view === "interior") {
                 showRooms();
                 return;
@@ -351,6 +356,8 @@ function showImage(imagePath, alt) {
                 button?.click();
                 document.dispatchEvent(new Event("doma:gallery-change"));
             },
+            selectObject360,
+            getObject360Key: () => object360Key,
             selectRoom: (roomId) => {
                 showRoomGallery(roomId);
                 document.dispatchEvent(new Event("doma:gallery-change"));
@@ -390,6 +397,7 @@ function showImage(imagePath, alt) {
 
                 button.classList.add("active");
                 showGallery(button.dataset.view);
+                document.dispatchEvent(new Event("doma:gallery-change"));
             });
         });
 
@@ -400,6 +408,22 @@ function showImage(imagePath, alt) {
     }
 }
 
+// In landscape fullscreen the site header must enter the fullscreen top layer too.
+const galleryHeader = document.querySelector(".house-page .site-header");
+let headerRestore = null;
+function moveHeaderIntoGallery() {
+    if (!galleryHeader || !visualContainer || headerRestore) return;
+    headerRestore = { parent: galleryHeader.parentNode, next: galleryHeader.nextSibling };
+    visualContainer.appendChild(galleryHeader);
+}
+function restoreGalleryHeader() {
+    if (!headerRestore || !galleryHeader) return;
+    const { parent, next } = headerRestore;
+    if (next?.parentNode === parent) parent.insertBefore(galleryHeader, next);
+    else parent.appendChild(galleryHeader);
+    headerRestore = null;
+}
+
 // Полноэкранный режим
 if (visualContainer && fullscreenButton) {
     fullscreenButton.addEventListener("click", async () => {
@@ -407,9 +431,11 @@ if (visualContainer && fullscreenButton) {
             if (document.fullscreenElement === visualContainer) {
                 await document.exitFullscreen();
             } else {
+                if (landscapeMedia.matches) moveHeaderIntoGallery();
                 await visualContainer.requestFullscreen();
             }
         } catch (error) {
+            restoreGalleryHeader();
             console.error("Ошибка полноэкранного режима:", error);
         }
     });
@@ -429,10 +455,27 @@ if (mainImage && visualContainer) {
 }
 
 document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement !== visualContainer) restoreGalleryHeader();
+    // Clear portrait crop on fullscreen entry, restore it on exit without reloading.
+    if (mainImage && window.domaGallery) {
+        const gallery = window.domaGallery;
+        const state = gallery.getState();
+        const images = state.activeView === "interior"
+            ? gallery.project.gallery?.interior?.[state.activeRoom]?.images
+            : gallery.project.gallery?.[state.activeView];
+        const imagePath = Array.isArray(images) ? images[state.activeImageIndex] : null;
+        if (imagePath) {
+            const preview = gallery.project.mobilePreviews?.[imagePath] ?? {};
+            const isPortrait = window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches;
+            const isFullscreen = document.fullscreenElement === visualContainer;
+            mainImage.style.objectFit = isFullscreen && isPortrait ? "contain" : isPortrait ? "cover" : "";
+            mainImage.style.objectPosition = isFullscreen ? "50% 50%" : isPortrait ? `${preview.x ?? 50}% ${preview.y ?? 50}%` : "50% 50%";
+            mainImage.style.transform = isFullscreen ? "none" : isPortrait ? `scale(${Math.min(3, Math.max(1, Number(preview.scale) || 1))})` : "";
+        }
+    }
     if (!fullscreenButton) return;
 
-    const isFullscreen =
-        document.fullscreenElement === visualContainer;
+    const isFullscreen = document.fullscreenElement === visualContainer;
 
     fullscreenButton.textContent = isFullscreen ? "⤢" : "⛶";
 
@@ -481,7 +524,29 @@ function initMobileGallerySheet() {
         });
 
         items.replaceChildren();
-        if (activeView === "interior") {
+        if (activeView === "object360") {
+            Object.entries(project.object360 || {}).forEach(([key, config]) => {
+                if (!config || !(config.path || config.file)) return;
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "gallery-sheet-item";
+                button.classList.toggle("active", gallery.getObject360Key() === key);
+                const preview = document.createElement("div");
+                preview.className = "gallery-sheet-preview";
+                const previewPath = object360Preview(config, project, key);
+                if (previewPath) {
+                    preview.appendChild(makeGalleryPreview(previewPath, project.gallery?.exterior?.[0]));
+                } else {
+                    preview.classList.add("is-placeholder");
+                    preview.textContent = "360°";
+                }
+                const label = document.createElement("span");
+                label.textContent = ({ house: "Дом 360°", bath: "Баня 360°", sauna: "Баня 360°" })[key] || `${config.title || key} 360°`;
+                button.append(preview, label);
+                button.addEventListener("click", () => gallery.selectObject360(key));
+                items.appendChild(button);
+            });
+        } else if (activeView === "interior") {
             const rooms = Object.entries(project.gallery?.interior ?? {}).filter(
                 ([, room]) => Array.isArray(room.images) && room.images.length
             );
@@ -496,7 +561,7 @@ function initMobileGallerySheet() {
                 img.loading = "lazy";
                 const label = document.createElement("span");
                 label.textContent = room.title;
-                button.append(preview, label);
+                button.append(img, label);
                 button.addEventListener("click", () => gallery.selectRoom(roomId));
                 items.appendChild(button);
             });
@@ -525,7 +590,7 @@ function initMobileGallerySheet() {
         const images = activeView === "interior"
             ? project.gallery?.interior?.[activeRoom]?.images ?? []
             : project.gallery?.[activeView] ?? [];
-        const total = Array.isArray(images) ? images.length : 0;
+        const total = activeView === "object360" ? 0 : (Array.isArray(images) ? images.length : 0);
         if (count) count.textContent = total ? `${activeImageIndex + 1} / ${total}` : "";
         if (dots) {
             dots.replaceChildren();
@@ -582,16 +647,23 @@ function initLandscapeAlbums() {
     function getAlbums(project) {
         const gallery = project.gallery || {};
         const result = [];
-        for (const [view, data] of Object.entries(gallery)) {
-            if (view === "interior") {
-                for (const [roomId, room] of Object.entries(data || {})) {
-                    if (!Array.isArray(room.images) || !room.images.length) continue;
-                    result.push({ view, roomId, title: room.title || roomId, image: room.images[0] });
-                }
-            } else {
-                result.push({ view, roomId: null, title: names[view] || view,
-                    image: Array.isArray(data) && data.length ? data[0] : null });
-            }
+        const exterior = gallery.exterior || [];
+        result.push({ view: "exterior", roomId: null, title: "Фасады", image: exterior[0] || null });
+        Object.entries(project.object360 || {}).forEach(([key, config]) => {
+            if (!config || !(config.path || config.file)) return;
+            const label = ({ house: "Дом 360°", bath: "Баня 360°", sauna: "Баня 360°" })[key] || `${config.title || key} 360°`;
+            result.push({ view: "object360", roomId: key, title: label,
+                image: object360Preview(config, project, key) });
+        });
+        Object.entries(gallery.interior || {}).forEach(([roomId, room]) => {
+            if (!Array.isArray(room.images) || !room.images.length) return;
+            result.push({ view: "interior", roomId, title: room.title || roomId, image: room.images[0] });
+        });
+        for (const view of ["plans", "surroundings"]) {
+            if (!(view in gallery)) continue;
+            const images = gallery[view];
+            result.push({ view, roomId: null, title: names[view],
+                image: Array.isArray(images) && images.length ? images[0] : null });
         }
         return result;
     }
@@ -614,11 +686,7 @@ function initLandscapeAlbums() {
                 const preview = document.createElement("div");
                 preview.className = "gallery-landscape-preview";
                 if (album.image) {
-                    const img = document.createElement("img");
-                    img.src = PROJECT_PATH + album.image;
-                    img.alt = "";
-                    img.loading = "lazy";
-                    preview.appendChild(img);
+                    preview.appendChild(makeGalleryPreview(album.image, api.project.gallery?.exterior?.[0]));
                 } else {
                     preview.classList.add("is-placeholder");
                     preview.textContent = "СКОРО";
@@ -627,7 +695,9 @@ function initLandscapeAlbums() {
                 label.textContent = album.title;
                 button.append(preview, label);
                 button.addEventListener("click", () => {
-                    if (album.view === "interior") {
+                    if (album.view === "object360") {
+                        api.selectObject360(album.roomId);
+                    } else if (album.view === "interior") {
                         if (api.getState().activeView !== "interior") api.selectView("interior");
                         api.selectRoom(album.roomId);
                     } else {
@@ -638,9 +708,11 @@ function initLandscapeAlbums() {
             });
         }
         const { activeView, activeRoom } = api.getState();
+        const activeObject = api.getObject360Key();
         list.querySelectorAll(".gallery-landscape-album").forEach(button => {
             const selected = button.dataset.view === activeView &&
-                (activeView !== "interior" || button.dataset.room === activeRoom);
+                (activeView === "object360" ? button.dataset.room === activeObject :
+                 activeView !== "interior" || button.dataset.room === activeRoom);
             button.classList.toggle("active", selected);
             button.setAttribute("aria-current", selected ? "true" : "false");
         });

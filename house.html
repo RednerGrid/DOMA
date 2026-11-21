@@ -71,6 +71,7 @@
                     <div class="project-gallery-placeholder" hidden>
                         <span>Материалы уточняются</span>
                     </div>
+                    <div class="doma-object360-inline" hidden></div>
                     <!-- VIEWER NAVIGATION -->
 
                     <div class="project-visual-menu" aria-label="Режим просмотра">
@@ -82,6 +83,8 @@
                         <button type="button" data-view="interior">
                             Интерьер
                         </button>
+
+                        <button type="button" data-view="object360">360°</button>
 
                         <button type="button" data-view="plans">
                             Планировки
@@ -145,7 +148,7 @@
 
                         </div>
 
-                        <button type="button" class="project-object360-toggle" aria-label="Включить облёт 360°" aria-pressed="false">360°</button>
+
 
                         <button type="button" class="project-fullscreen" aria-label="Полный экран">
                             ⛶
@@ -451,13 +454,6 @@
 
         </main>
 
-    </div>
-    <!-- Object360 modal: independent of gallery layout -->
-    <div class="doma-object360-modal" hidden>
-        <div class="doma-object360-dialog" role="dialog" aria-modal="true" aria-label="Облёт дома 360°" tabindex="-1">
-            <button type="button" class="doma-object360-close" aria-label="Закрыть просмотр 360°">×</button>
-            <div class="doma-object360-host"></div>
-        </div>
     </div>
     <script type="module" src="./js/houseGallery.js"></script>
 </body>

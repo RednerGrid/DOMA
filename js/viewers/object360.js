@@ -32,7 +32,9 @@ export function createObject360(container, config, basePath) {
                 if (d < nearest) { nearest = d; index = i; }
             }
         }
-        if (!images[index] || (index === lastDrawn && wanted === lastFrame)) return;
+        if (!images[index] || (index === lastDrawn && wanted === lastFrame &&
+            canvas.width === Math.round(canvas.getBoundingClientRect().width) &&
+            canvas.height === Math.round(canvas.getBoundingClientRect().height))) return;
         const img = images[index];
         const rect = canvas.getBoundingClientRect();
 
@@ -44,7 +46,7 @@ export function createObject360(container, config, basePath) {
             canvas.height = height;
         }
 
-        const scale = Math.max(
+        const scale = Math.min(
             width / img.naturalWidth,
             height / img.naturalHeight
         );
@@ -59,6 +61,11 @@ export function createObject360(container, config, basePath) {
         lastDrawn = index;
         lastFrame = wanted;
     }
+    const resizeObserver = new ResizeObserver(() => {
+        lastDrawn = -1;
+        draw();
+    });
+    resizeObserver.observe(container);
     function load(i) {
         if (disposed || images[i] || failed.has(i) || pending.has(i)) return Promise.resolve();
         pending.add(i);
@@ -71,10 +78,16 @@ export function createObject360(container, config, basePath) {
     }
     function tick() {
         if (disposed) return;
-        if (pointerId === null && Math.abs(velocity) > .005) {
+        if (pointerId === null && Math.abs(velocity) > 0.05) {
             angle = (angle + velocity + 360) % 360;
-            velocity *= .95;
+
+            velocity *= Math.abs(velocity) > 0.5
+                ? 0.92
+                : 0.85;
+
             draw();
+        } else if (pointerId === null) {
+            velocity = 0;
         }
         raf = requestAnimationFrame(tick);
     }
@@ -114,6 +127,7 @@ export function createObject360(container, config, basePath) {
             disposed = true;
             abort.abort();
             cancelAnimationFrame(raf);
+            resizeObserver.disconnect();
             canvas.removeEventListener('pointerdown', down);
             canvas.removeEventListener('pointermove', move);
             canvas.removeEventListener('pointerup', up);
@@ -173,13 +187,15 @@ function createVideoObject360(container, config, basePath) {
             canvas.width = width;
             canvas.height = height;
         }
-        const scale = Math.max(width / video.videoWidth, height / video.videoHeight);
+        const scale = Math.min(width / video.videoWidth, height / video.videoHeight);
         const drawWidth = video.videoWidth * scale;
         const drawHeight = video.videoHeight * scale;
         ctx.drawImage(video, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
         status.hidden = true;
     }
 
+    const resizeObserver = new ResizeObserver(() => paint());
+    resizeObserver.observe(container);
     function seekLatest() {
         if (disposed || !ready || seeking || wantedFrame === displayedFrame) return;
         seeking = true;
@@ -226,11 +242,19 @@ function createVideoObject360(container, config, basePath) {
 
     function tick() {
         if (disposed) return;
-        if (pointerId === null && Math.abs(velocity) > 0.005) {
+
+        if (pointerId === null && Math.abs(velocity) > 0.05) {
             angle = (angle + velocity + 360) % 360;
-            velocity *= 0.95;
+
+            velocity *= Math.abs(velocity) > 0.5
+                ? 0.92
+                : 0.85;
+
             update();
+        } else if (pointerId === null) {
+            velocity = 0;
         }
+
         raf = requestAnimationFrame(tick);
     }
 
@@ -268,6 +292,7 @@ function createVideoObject360(container, config, basePath) {
         destroy() {
             disposed = true;
             cancelAnimationFrame(raf);
+            resizeObserver.disconnect();
             canvas.removeEventListener('pointerdown', down);
             canvas.removeEventListener('pointermove', move);
             canvas.removeEventListener('pointerup', up);
