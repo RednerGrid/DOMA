@@ -1,4 +1,4 @@
-:root{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#17191a}*{box-sizing:border-box}body{margin:0}button,a{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.house-v2{overflow:hidden}.house-v2 .site-header{height:64px;position:fixed;z-index:30;top:0;left:0;right:0;background:rgba(21,22,23,.87);display:flex;align-items:center;justify-content:space-between;padding:0 36px;gap:30px}.brand{font-size:25px;white-space:nowrap}.brand strong{letter-spacing:.015em}.header-links{display:flex;align-items:center;gap:54px}.header-links a{font-size:14px;opacity:.86;padding:21px 0}.header-links .current{border-bottom:2px solid white;opacity:1}.request-link{font-size:14px;border:1px solid #eee;border-radius:20px;padding:10px 23px;white-space:nowrap}.burger{display:none;background:none;border:0;color:white;font-size:24px}.house-v2 .project-visual{position:relative;width:100%;height:100dvh;min-height:520px;background:#17191a;overflow:hidden}.project-visual-image,.hero-cover{position:absolute;inset:64px 0 0 0;width:100%;height:calc(100% - 64px)}.project-visual-image{object-fit:cover;object-position:center;z-index:0}.hero-cover{z-index:1;background-image:url('../projects/barn80/assets/hero.jpg');background-position:center;background-size:cover;transition:opacity .55s ease}.hero-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 47%,rgba(13,15,17,.58) 100%)}.house-v2.is-browsing .hero-cover{opacity:0;pointer-events:none}.gallery-landscape-albums{position:absolute;z-index:8;top:64px;bottom:0;left:0;width:250px;background:linear-gradient(90deg,rgba(19,20,21,.95),rgba(19,20,21,.84));overflow:auto;scrollbar-width:thin}.gallery-landscape-list{display:flex;flex-direction:column;gap:10px;padding:20px 16px 28px}.gallery-landscape-album{display:flex;align-items:center;gap:14px;width:100%;min-height:74px;padding:7px 10px;background:transparent;border:1px solid transparent;border-radius:12px;color:white;text-align:left;font-size:13px;font-weight:700;text-transform:uppercase}.gallery-landscape-album.active{border-color:white;background:rgba(255,255,255,.09)}.gallery-landscape-preview{width:88px;height:62px;border-radius:8px;overflow:hidden;flex:none;background:#343434}.gallery-landscape-preview img{width:100%;height:100%;object-fit:cover;display:block}.project-intro{position:absolute;z-index:6;top:calc(64px + 5vh);right:4.5%;width:min(440px,32vw);transition:opacity .4s ease,transform .4s ease;pointer-events:auto}.eyebrow{font-size:13px;font-weight:700;letter-spacing:.035em}.eyebrow span{padding-left:24px;color:#ccc}.project-intro h1{font-size:clamp(38px,3.7vw,67px);line-height:1.06;letter-spacing:-.035em;margin:12px 0 20px}.project-lead{font-size:clamp(15px,1.12vw,19px);line-height:1.5;max-width:430px;color:#e5e5e5;margin:0 0 30px}.project-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 34px}.project-facts>div{display:flex;flex-direction:column;gap:5px}.fact-icon{font-size:27px;line-height:1.1}.project-facts strong{font-size:19px;white-space:nowrap}.project-facts small{font-size:12px}.vr-cta{background:linear-gradient(#fff,#e7e7e7);color:#171717;border:0;border-radius:15px;padding:18px 35px;font-weight:700;font-size:17px;box-shadow:0 8px 24px #0004}.vr-cta span{margin-right:15px}.house-v2.is-browsing .project-intro{opacity:0;transform:translateX(22px);pointer-events:none}.info-toggle{position:absolute;z-index:10;top:calc(64px + 24px);right:34px;width:46px;height:46px;border:2px solid white;border-radius:50%;background:rgba(0,0,0,.22);color:white;font-family:Georgia,serif;font-size:28px}.info-toggle[hidden]{display:none}.gallery-progress{position:absolute;z-index:9;left:282px;bottom:28px;display:flex;align-items:center;gap:22px;font-weight:700;font-size:17px;text-shadow:0 2px 6px #0008}.gallery-progress-dots{display:flex;align-items:center;gap:10px}.gallery-progress-dot{width:9px;height:9px;border:1px solid white;border-radius:50%;background:transparent;display:block}.gallery-progress-dot.active{background:white}.viewer-controls{position:absolute;z-index:9;right:30px;bottom:23px;display:flex;gap:12px}.viewer-controls button{width:52px;height:40px;border:1px solid #eee;border-radius:24px;background:rgba(0,0,0,.32);color:white;font-size:22px}.viewer-controls .project-fullscreen{margin-left:15px}.project-visual-menu,.project-visual-bottom{display:none!important}.doma-object360-inline:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;background:#1a1a1a}.project-gallery-placeholder:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;display:grid;place-items:center;background:#252525}.vr-dialog:not([hidden]){position:fixed;z-index:100;inset:0;background:#000a;display:grid;place-items:center;padding:20px}.vr-dialog-panel{position:relative;width:min(450px,100%);padding:38px;background:#252525;border:1px solid #777;border-radius:15px;line-height:1.6}.vr-close{position:absolute;right:14px;top:9px;border:0;background:none;color:white;font-size:30px}@media(max-width:900px){.header-links{gap:18px}.gallery-landscape-albums{width:155px}.gallery-landscape-list{padding:12px 8px}.gallery-landscape-album{flex-direction:column;gap:5px;text-align:center;font-size:11px}.gallery-landscape-preview{width:100%;height:65px}.project-intro{width:43vw;right:3%}.gallery-progress{left:175px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:155px}}@media(max-width:650px){.house-v2 .site-header{padding:0 18px}.header-links,.request-link{display:none}.burger{display:block}.gallery-landscape-albums{width:108px}.gallery-landscape-preview{height:55px}.project-intro{width:calc(100% - 150px);top:100px}.project-intro h1{font-size:32px}.project-lead{font-size:13px}.project-facts{grid-template-columns:repeat(2,1fr);gap:12px}.vr-cta{padding:12px;font-size:13px}.gallery-progress{left:125px;bottom:80px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:108px}}
+:root{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#17191a}*{box-sizing:border-box}body{margin:0}button,a{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.house-v2{overflow:hidden}.house-v2 .site-header{height:64px;position:fixed;z-index:30;top:0;left:0;right:0;background:rgba(21,22,23,.87);display:flex;align-items:center;justify-content:space-between;padding:0 36px;gap:30px}.brand{font-size:25px;white-space:nowrap}.brand strong{letter-spacing:.015em}.header-links{display:flex;align-items:center;gap:54px}.header-links a{font-size:14px;opacity:.86;padding:21px 0}.header-links .current{border-bottom:2px solid white;opacity:1}.request-link{font-size:14px;border:1px solid #eee;border-radius:20px;padding:10px 23px;white-space:nowrap}.burger{display:none;background:none;border:0;color:white;font-size:24px}.house-v2 .project-visual{position:relative;width:100%;height:100dvh;min-height:520px;background:#17191a;overflow:hidden}.project-visual-image,.hero-cover{position:absolute;inset:64px 0 0 0;width:100%;height:calc(100% - 64px)}.project-visual-image{object-fit:cover;object-position:center;z-index:0}.hero-cover{z-index:1;background-image:url("../projects/barn80/assets/hero.jpg");background-position:center;background-size:cover;transition:opacity .55s ease}.hero-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 47%,rgba(13,15,17,.58) 100%)}.house-v2.is-browsing .hero-cover{opacity:0;pointer-events:none}.gallery-landscape-albums{position:absolute;z-index:8;top:64px;bottom:0;left:0;width:250px;background:linear-gradient(90deg,rgba(19,20,21,.95),rgba(19,20,21,.84));overflow:auto;scrollbar-width:thin}.gallery-landscape-list{display:flex;flex-direction:column;gap:10px;padding:20px 16px 28px}.gallery-landscape-album{display:flex;align-items:center;gap:14px;width:100%;min-height:74px;padding:7px 10px;background:transparent;border:1px solid transparent;border-radius:12px;color:white;text-align:left;font-size:13px;font-weight:700;text-transform:uppercase}.gallery-landscape-album.active{border-color:white;background:rgba(255,255,255,.09)}.gallery-landscape-preview{width:88px;height:62px;border-radius:8px;overflow:hidden;flex:none;background:#343434}.gallery-landscape-preview img{width:100%;height:100%;object-fit:cover;display:block}.project-intro{position:absolute;z-index:6;top:calc(64px + 5vh);right:4.5%;width:min(440px,32vw);transition:opacity .4s ease,transform .4s ease;pointer-events:auto}.eyebrow{font-size:13px;font-weight:700;letter-spacing:.035em}.eyebrow span{padding-left:24px;color:#ccc}.project-intro h1{font-size:clamp(38px,3.7vw,67px);line-height:1.06;letter-spacing:-.035em;margin:12px 0 20px}.project-lead{font-size:clamp(15px,1.12vw,19px);line-height:1.5;max-width:430px;color:#e5e5e5;margin:0 0 30px}.project-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 34px}.project-facts>div{display:flex;flex-direction:column;gap:5px}.fact-icon{font-size:27px;line-height:1.1}.project-facts strong{font-size:19px;white-space:nowrap}.project-facts small{font-size:12px}.vr-cta{background:linear-gradient(#fff,#e7e7e7);color:#171717;border:0;border-radius:15px;padding:18px 35px;font-weight:700;font-size:17px;box-shadow:0 8px 24px #0004}.vr-cta span{margin-right:15px}.house-v2.is-browsing .project-intro{opacity:0;transform:translateX(22px);pointer-events:none}.info-toggle{position:absolute;z-index:10;top:calc(64px + 24px);right:34px;width:46px;height:46px;border:2px solid white;border-radius:50%;background:rgba(0,0,0,.22);color:white;font-family:Georgia,serif;font-size:28px}.info-toggle[hidden]{display:none}.gallery-progress{position:absolute;z-index:9;left:282px;bottom:28px;display:flex;align-items:center;gap:22px;font-weight:700;font-size:17px;text-shadow:0 2px 6px #0008}.gallery-progress-dots{display:flex;align-items:center;gap:10px}.gallery-progress-dot{width:9px;height:9px;border:1px solid white;border-radius:50%;background:transparent;display:block}.gallery-progress-dot.active{background:white}.viewer-controls{position:absolute;z-index:9;right:30px;bottom:23px;display:flex;gap:12px}.viewer-controls button{width:52px;height:40px;border:1px solid #eee;border-radius:24px;background:rgba(0,0,0,.32);color:white;font-size:22px}.viewer-controls .project-fullscreen{margin-left:15px}.project-visual-menu,.project-visual-bottom{display:none!important}.doma-object360-inline:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;background:#1a1a1a}.project-gallery-placeholder:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;display:grid;place-items:center;background:#252525}.vr-dialog:not([hidden]){position:fixed;z-index:100;inset:0;background:#000a;display:grid;place-items:center;padding:20px}.vr-dialog-panel{position:relative;width:min(450px,100%);padding:38px;background:#252525;border:1px solid #777;border-radius:15px;line-height:1.6}.vr-close{position:absolute;right:14px;top:9px;border:0;background:none;color:white;font-size:30px}@media(max-width:900px){.header-links{gap:18px}.gallery-landscape-albums{width:155px}.gallery-landscape-list{padding:12px 8px}.gallery-landscape-album{flex-direction:column;gap:5px;text-align:center;font-size:11px}.gallery-landscape-preview{width:100%;height:65px}.project-intro{width:43vw;right:3%}.gallery-progress{left:175px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:155px}}@media(max-width:650px){.house-v2 .site-header{padding:0 18px}.header-links,.request-link{display:none}.burger{display:block}.gallery-landscape-albums{width:108px}.gallery-landscape-preview{height:55px}.project-intro{width:calc(100% - 150px);top:100px}.project-intro h1{font-size:32px}.project-lead{font-size:13px}.project-facts{grid-template-columns:repeat(2,1fr);gap:12px}.vr-cta{padding:12px;font-size:13px}.gallery-progress{left:125px;bottom:80px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:108px}}
 
 /* v2: hide gallery controls until a user chooses an album. */
 .house-v2:not(.is-browsing) .gallery-progress,
@@ -82,4 +82,538 @@
 }
 @media (prefers-reduced-motion:reduce) {
   .house-v2 .project-visual { --gallery-transition-duration: 0ms; }
+}
+
+/* v5 — mobile portrait: image 5:4 above dark project panel and album rail. */
+@media (max-width:700px) and (orientation:portrait) {
+  .house-v2 { overflow-x:hidden; overflow-y:auto; background:#1d1d1d; }
+  .house-v2 .site-header { height:60px; padding:0 18px; background:#171717; }
+  .house-v2 .project-visual {
+    height:auto; min-height:100dvh; padding-top:60px; overflow:visible;
+    display:flex; flex-direction:column; background:#1d1d1d;
+  }
+  .house-v2 .project-visual-image,
+  .house-v2 .hero-cover,
+  .house-v2 .gallery-crossfade-image,
+  .house-v2 .doma-object360-inline:not([hidden]),
+  .house-v2 .project-gallery-placeholder:not([hidden]),
+  .house-v2 .doma-object-transition-snapshot {
+    position:absolute !important; top:60px !important; left:0 !important;
+    right:0 !important; bottom:auto !important; inset:auto !important;
+    width:100% !important; height:auto !important; aspect-ratio:5 / 4;
+  }
+  .house-v2 .project-visual-image { object-fit:cover; object-position:center; }
+  .house-v2 .hero-cover { background-position:center; }
+  .house-v2 .hero-cover::after { background:linear-gradient(0deg,rgba(15,15,15,.15),transparent 55%); }
+  .house-v2 .doma-object360-inline:not([hidden]) { overflow:hidden; }
+  .house-v2 .project-visual::before { content:"";display:block; width:100%;aspect-ratio:5 / 4;flex:none; }
+  .house-v2 .project-intro {
+    position:relative;top:auto;right:auto;left:auto;width:100%;max-width:none;
+    padding:24px 22px 14px;z-index:6;background:#1d1d1d;
+    transform:none;transition:opacity 400ms ease,max-height 400ms ease,padding 400ms ease;
+    max-height:580px;overflow:hidden;
+  }
+  .house-v2 .project-intro h1 { font-size:34px; margin:8px 0 12px; }
+  .house-v2 .project-lead { font-size:14px;line-height:1.5;max-width:none;margin-bottom:22px; }
+  .house-v2 .project-facts { grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:24px; }
+  .house-v2 .project-facts > div { align-items:flex-start;gap:3px; }
+  .house-v2 .fact-icon { font-size:22px; }
+  .house-v2 .project-facts strong { font-size:15px; }
+  .house-v2 .project-facts small { font-size:10px; }
+  .house-v2 .vr-cta { display:block;width:100%;border-radius:30px;padding:16px;font-size:15px; }
+  .house-v2.is-browsing .project-intro {
+    opacity:0;max-height:0;padding-top:0;padding-bottom:0;pointer-events:none;
+    transform:none;
+  }
+  .house-v2 .gallery-landscape-albums {
+    position:relative;top:auto;bottom:auto;left:auto;width:100%;height:auto;
+    overflow-x:auto;overflow-y:hidden;z-index:8;background:#1d1d1d;
+    scrollbar-width:thin;order:3;
+  }
+  .house-v2 .gallery-landscape-albums::before { display:none; }
+  .house-v2 .gallery-landscape-list {
+    flex-direction:row;align-items:flex-start;justify-content:flex-start;
+    gap:12px;width:max-content;min-width:100%;padding:16px 18px 22px;
+  }
+  .house-v2 .gallery-landscape-album {
+    flex:0 0 91px;width:91px;min-height:0;padding:5px 3px 7px;
+    gap:7px;border-radius:12px;transform:none;
+  }
+  .house-v2 .gallery-landscape-album.active { transform:none; }
+  .house-v2 .gallery-landscape-preview { width:81px;height:81px;border-radius:10px; }
+  .house-v2 .gallery-landscape-album > span { font-size:10px;line-height:1.2; }
+  .house-v2 .info-toggle { top:76px;right:16px;width:38px;height:38px;font-size:23px; }
+  .house-v2 .gallery-progress {
+    position:relative;left:auto;bottom:auto;order:2;
+    padding:14px 20px 0;gap:14px;font-size:14px;z-index:9;
+    text-shadow:none;
+  }
+  .house-v2 .viewer-controls {
+    position:absolute;top:calc(60px + (100vw * .8) - 54px);
+    right:12px;bottom:auto;gap:7px;
+  }
+  .house-v2 .viewer-controls button {width:39px;height:36px;font-size:18px;}
+  .house-v2 .viewer-controls .project-fullscreen {margin-left:2px;}
+  .house-v2:not(.is-browsing) .gallery-progress,
+  .house-v2:not(.is-browsing) .viewer-controls {display:none!important;}
+  .house-v2 .project-visual-bottom {display:none!important;}
+  /* Fullscreen returns to a real viewport-sized image stage. */
+  .house-v2 .project-visual:fullscreen {height:100dvh;min-height:0;padding-top:0;overflow:hidden;display:block;}
+  .house-v2 .project-visual:fullscreen::before,
+  .house-v2 .project-visual:fullscreen .gallery-landscape-albums,
+  .house-v2 .project-visual:fullscreen .project-intro {display:none;}
+  .house-v2 .project-visual:fullscreen .project-visual-image,
+  .house-v2 .project-visual:fullscreen .hero-cover,
+  .house-v2 .project-visual:fullscreen .gallery-crossfade-image,
+  .house-v2 .project-visual:fullscreen .doma-object360-inline:not([hidden]),
+  .house-v2 .project-visual:fullscreen .doma-object-transition-snapshot {
+    top:0!important;height:100%!important;aspect-ratio:auto;
+  }
+  .house-v2 .project-visual:fullscreen .viewer-controls {top:auto;bottom:20px;}
+  .house-v2 .project-visual:fullscreen .gallery-progress {position:absolute;bottom:24px;left:18px;}
+}
+
+/* v5.1 — portrait layout: photo stage, dark details, then horizontal album rail. */
+@media screen and (max-width:700px) and (orientation:portrait) {
+  html, body.house-v2 { min-height:100%; overflow-x:hidden; }
+  body.house-v2 .project-visual {
+    display:flex !important; flex-direction:column !important;
+    height:auto !important; min-height:100dvh !important;
+    padding-top:60px !important; overflow:visible !important;
+    background:#1d1d1d;
+  }
+  body.house-v2 .project-visual::before {
+    content:""; display:block !important; width:100%; aspect-ratio:5 / 4;
+    flex:0 0 auto; order:0;
+  }
+  body.house-v2 .project-visual-image,
+  body.house-v2 .hero-cover,
+  body.house-v2 .gallery-crossfade-image,
+  body.house-v2 .doma-object360-inline:not([hidden]),
+  body.house-v2 .project-gallery-placeholder:not([hidden]),
+  body.house-v2 .doma-object-transition-snapshot {
+    position:absolute !important; inset:60px 0 auto 0 !important;
+    top:60px !important; width:100% !important;
+    height:80vw !important; aspect-ratio:auto !important;
+  }
+  body.house-v2 .hero-cover { background-size:cover; background-position:48% 50%; }
+  body.house-v2 .hero-cover::after { background:linear-gradient(0deg,rgba(22,22,22,.20),transparent 60%); }
+  body.house-v2 .project-intro {
+    position:relative !important; inset:auto !important; order:1;
+    width:100% !important; max-width:none !important;
+    margin:0 !important; padding:22px 20px 12px !important;
+    background:#1d1d1d; z-index:6;
+    opacity:1; transform:none !important;
+    max-height:650px; overflow:hidden;
+    transition:opacity var(--gallery-transition-duration,650ms) ease,
+      max-height var(--gallery-transition-duration,650ms) ease,
+      padding var(--gallery-transition-duration,650ms) ease !important;
+  }
+  body.house-v2 .project-intro h1 { font-size:clamp(28px,8vw,40px); margin:8px 0 12px; }
+  body.house-v2 .project-lead { font-size:14px; line-height:1.55; margin:0 0 22px; }
+  body.house-v2 .project-facts { grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin-bottom:22px; }
+  body.house-v2 .project-facts strong { font-size:clamp(12px,3.8vw,17px); }
+  body.house-v2 .project-facts small { font-size:10px; }
+  body.house-v2 .vr-cta { display:block; width:100%; max-width:420px; margin:0 auto; border-radius:32px; }
+  body.house-v2.is-browsing .project-intro {
+    opacity:0; max-height:0; padding-top:0 !important; padding-bottom:0 !important;
+    pointer-events:none;
+  }
+  body.house-v2 .gallery-progress {
+    position:relative !important; inset:auto !important; order:2;
+    padding:12px 20px 0; margin:0; background:#1d1d1d;
+  }
+  body.house-v2 .gallery-landscape-albums {
+    display:block !important; position:relative !important;
+    inset:auto !important; order:3; width:100% !important;
+    overflow-x:auto !important; overflow-y:hidden !important;
+    background:#1d1d1d !important; z-index:8;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.house-v2 .gallery-landscape-albums::before { display:none !important; }
+  body.house-v2 .gallery-landscape-list {
+    display:flex !important; flex-direction:row !important; align-items:flex-start;
+    width:max-content; min-width:100%; gap:12px; padding:14px 16px 24px;
+  }
+  body.house-v2 .gallery-landscape-album {
+    flex:0 0 88px !important; width:88px !important; min-height:0 !important;
+    padding:4px 2px 7px; transform:none !important;
+  }
+  body.house-v2 .gallery-landscape-preview {
+    width:80px !important; height:80px !important; border-radius:10px;
+  }
+  body.house-v2 .gallery-landscape-album > span { font-size:10px; }
+  body.house-v2 .viewer-controls {
+    position:absolute !important; z-index:9; top:calc(60px + 80vw - 51px) !important;
+    right:12px !important; bottom:auto !important;
+  }
+  body.house-v2 .info-toggle { top:76px; right:16px; }
+  body.house-v2 .project-visual:fullscreen {
+    display:block !important; padding-top:0 !important;
+    height:100dvh !important; min-height:0 !important; overflow:hidden !important;
+  }
+  body.house-v2 .project-visual:fullscreen::before,
+  body.house-v2 .project-visual:fullscreen .project-intro,
+  body.house-v2 .project-visual:fullscreen .gallery-landscape-albums { display:none !important; }
+  body.house-v2 .project-visual:fullscreen .project-visual-image,
+  body.house-v2 .project-visual:fullscreen .hero-cover,
+  body.house-v2 .project-visual:fullscreen .gallery-crossfade-image,
+  body.house-v2 .project-visual:fullscreen .doma-object360-inline:not([hidden]),
+  body.house-v2 .project-visual:fullscreen .doma-object-transition-snapshot {
+    inset:0 !important; top:0 !important; height:100% !important;
+  }
+  body.house-v2 .project-visual:fullscreen .viewer-controls { top:auto !important; bottom:20px !important; }
+  body.house-v2 .project-visual:fullscreen .gallery-progress {
+    position:absolute !important; bottom:24px !important; left:18px !important;
+    background:transparent;
+  }
+}
+
+/* v5.2 — edge-to-edge mobile image and floating navigation, both orientations. */
+@media screen and (max-width:700px),
+       screen and (orientation:landscape) and (max-height:600px) and (pointer:coarse) {
+  body.house-v2 .site-header {
+    position:fixed !important; inset:0 0 auto 0 !important;
+    width:100% !important; height:60px !important;
+    padding:0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)) !important;
+    display:flex !important; align-items:center !important; justify-content:space-between !important;
+    background:transparent !important; border:0 !important;
+    z-index:40 !important; pointer-events:none;
+  }
+  body.house-v2 .site-header .brand,
+  body.house-v2 .site-header .burger,
+  body.house-v2 .site-header .header-links { pointer-events:auto; }
+  body.house-v2 .site-header .brand {
+    position:relative; z-index:2; color:white; font-size:23px;
+    text-shadow:0 1px 5px #000a, 0 0 12px #0006;
+  }
+  body.house-v2 .site-header .header-links,
+  body.house-v2 .site-header .request-link { display:none; }
+  body.house-v2 .site-header .burger {
+    display:grid !important; place-items:center; position:relative; z-index:2;
+    width:44px; height:44px; padding:0; margin-left:auto;
+    color:#fff; background:transparent; border:0;
+    font-size:27px; line-height:1; text-shadow:0 1px 6px #000c;
+  }
+  body.house-v2 .site-header .header-links.is-open {
+    position:absolute !important; display:flex !important; flex-direction:column;
+    align-items:stretch; gap:0; top:58px; right:16px;
+    width:min(280px, calc(100vw - 32px)); padding:8px;
+    background:#202020f5; border:1px solid #ffffff30; border-radius:10px;
+    box-shadow:0 12px 28px #0007;
+  }
+  body.house-v2 .site-header .header-links.is-open a {
+    padding:12px 14px; border-bottom:0; font-size:14px;
+  }
+  body.house-v2 .project-visual:not(:fullscreen) > .project-visual-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .gallery-crossfade-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .hero-cover {
+    top:0 !important;
+  }
+  body.house-v2 .project-visual:not(:fullscreen) > .doma-object-transition-snapshot,
+  body.house-v2 .project-visual:not(:fullscreen) > .doma-object360-inline:not([hidden]),
+  body.house-v2 .project-visual:not(:fullscreen) > .project-gallery-placeholder:not([hidden]) {
+    top:0 !important;
+  }
+}
+@media screen and (max-width:700px) and (orientation:portrait) {
+  body.house-v2 .project-visual:not(:fullscreen) { padding-top:0 !important; }
+  body.house-v2 .project-visual:not(:fullscreen) > .project-visual-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .gallery-crossfade-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .hero-cover,
+  body.house-v2 .project-visual:not(:fullscreen) > .doma-object360-inline:not([hidden]),
+  body.house-v2 .project-visual:not(:fullscreen) > .project-gallery-placeholder:not([hidden]),
+  body.house-v2 .project-visual:not(:fullscreen) > .doma-object-transition-snapshot {
+    inset:0 0 auto 0 !important; top:0 !important; height:80vw !important;
+  }
+  body.house-v2 .project-visual:not(:fullscreen) .viewer-controls {
+    top:calc(80vw - 51px) !important;
+  }
+  body.house-v2 .project-visual:not(:fullscreen) .info-toggle { top:70px !important; }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* All mobile modes: photo navigation is by touch; fullscreen controls removed. */
+@media screen and (max-width:700px), screen and (orientation:landscape) and (max-height:600px) and (max-width:1100px) {
+  body.house-v2 .viewer-controls {display:none !important;}
+  body.house-v2 .project-visual-image,
+  body.house-v2 .gallery-crossfade-image {touch-action:none !important;user-select:none;-webkit-user-drag:none;}
+  body.house-v2 .hero-cover {touch-action:pan-y;}
+}
+
+@media screen and (max-width:700px), screen and (orientation:landscape) and (max-height:600px) and (max-width:1100px) {
+ body.house-v2 .project-visual-image.is-gesture-zoomed {transform:translate(var(--photo-gesture-x,0px),var(--photo-gesture-y,0px)) scale(var(--photo-gesture-scale,1)) !important;transform-origin:center center !important;}
+}
+
+
+/* ==========================================================
+   DOMA mobile landscape — unified layout
+   One layout definition, no versioned override patches.
+   ========================================================== */
+@media screen and (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+  body.house-v2 {
+    --rail-solid: 95px;       /* width of opaque left strip */
+    --rail-fade: 30px;        /* fade into the photo */
+    --rail-fade-shift: 0px;   /* move fade left/right independently */
+    --album-width: 100px;     /* thumbnail card width */
+    --album-left: 10px;      /* card horizontal offset */
+    --image-start: 80px;     /* image crop boundary */
+    --stage-color: #1d1d1d;
+  }
+
+  body.house-v2 .project-visual:not(:fullscreen) {
+    position: relative;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--stage-color);
+    padding: 0;
+  }
+
+  /* The image and crossfade occupy one stable viewport. */
+  body.house-v2 .project-visual:not(:fullscreen) > .project-visual-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .gallery-crossfade-image,
+  body.house-v2 .project-visual:not(:fullscreen) > .hero-cover {
+    position: absolute;
+    inset: 0 0 0 var(--image-start);
+    width: calc(100% - var(--image-start));
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    object-position: center;
+  }
+  body.house-v2 .project-visual:not(:fullscreen) > .hero-cover {
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Portrait and 5:4 photos: centered and uncropped, with blurred background. */
+  body.house-v2 .project-visual.is-narrow-photo:not(:fullscreen) > .project-visual-image,
+  body.house-v2 .project-visual.is-narrow-photo:not(:fullscreen) > .gallery-crossfade-image {
+    object-fit: contain;
+    object-position: center;
+    z-index: 2;
+  }
+  body.house-v2 .project-visual.is-narrow-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 0 var(--image-start);
+    background-image: var(--landscape-photo-background, none);
+    background-position: center;
+    background-size: cover;
+    filter: blur(20px) brightness(.65);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* One single overlay: opaque strip + adjustable soft edge. */
+  body.house-v2 .project-visual::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--rail-fade-shift);
+    width: calc(var(--rail-solid) + var(--rail-fade));
+    background: linear-gradient(to right,
+      var(--stage-color) 0,
+      var(--stage-color) var(--rail-solid),
+      transparent 100%);
+    z-index: 7;
+    pointer-events: none;
+  }
+
+  /* Scroll viewport is wider than opaque strip: cards float above the photo. */
+  body.house-v2 .gallery-landscape-albums {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: calc(var(--album-left) + var(--album-width) + 12px);
+    height: 100%;
+    background: transparent;
+    z-index: 20;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    isolation: auto;
+  }
+  body.house-v2 .gallery-landscape-albums::-webkit-scrollbar { display: none; }
+  body.house-v2 .gallery-landscape-albums::before { content: none; display: none; }
+  body.house-v2 .gallery-landscape-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 76px 0 18px var(--album-left);
+    width: 100%;
+  }
+  body.house-v2 .gallery-landscape-album {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+    width: var(--album-width);
+    min-height: 0;
+    padding: 2px;
+    gap: 3px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    transform: none;
+    z-index: 21;
+    text-align: center;
+  }
+  body.house-v2 .gallery-landscape-album.active {
+    border-color: #fff;
+    background: rgba(255,255,255,.12);
+    transform: none;
+  }
+  body.house-v2 .gallery-landscape-preview {
+    width: calc(var(--album-width) - 10px);
+    height: 60px;
+    margin: 0;
+    border-radius: 7px;
+  }
+  body.house-v2 .gallery-landscape-album > span {
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  /* Floating header above photo, no black top bar. */
+  body.house-v2 .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    padding: 0 20px 0 190px;
+    background: transparent;
+    z-index: 30;
+    pointer-events: none;
+  }
+  body.house-v2 .site-header .brand,
+  body.house-v2 .site-header .burger { pointer-events: auto; }
+  body.house-v2 .site-header .brand { font-size: 23px; }
+  body.house-v2 .site-header .header-links,
+  body.house-v2 .site-header .request-link { display: none; }
+  body.house-v2 .site-header .burger { display: grid; place-items: center; }
+
+/* Compact hero, contained in one readable column. */
+body.house-v2 .project-intro {
+    position: absolute;
+    top: 38px;
+    bottom: auto;
+    left: clamp(220px, 60%, 470px);
+    right: auto;
+    width: clamp(205px, 32vw, 290px);
+    max-width: calc(100% - 250px);
+    max-height: calc(100dvh - 66px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding: 10px 12px 12px;
+    background: rgba(12, 12, 12, 0.15);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1.3px);
+    border-radius: 12px;
+    z-index: 9;
+}
+
+body.house-v2 .project-intro .eyebrow {
+    font-size: 9px;
+}
+
+body.house-v2 .project-intro h1 {
+    font-size: clamp(17px, 2.5vw, 23px);
+    line-height: 1.1;
+    margin: 4px 0 7px;
+}
+
+body.house-v2 .project-intro .project-lead {
+    font-size: 14px;
+    line-height: 1.35;
+    margin: 0 0 8px;
+}
+
+/* Characteristics */
+body.house-v2 .project-intro .project-facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin: 0 0 8px;
+    
+}
+
+body.house-v2 .project-intro .project-facts > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 2px;
+}
+
+body.house-v2 .project-intro .fact-icon {
+    display: block;
+    flex-shrink: 0;
+    font-size: 26px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+body.house-v2 .project-intro .project-facts strong {
+    display: block;
+    font-size: 12px;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+body.house-v2 .project-intro .project-facts small {
+    display: block;
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+/* VR button */
+body.house-v2 .project-intro .vr-cta {
+    padding: 7px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+  body.house-v2 .info-toggle { top: 80px; right: 28px; }
+
+  body.house-v2 .gallery-progress {
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 22;
+    white-space: nowrap;
+  }
+  body.house-v2 .viewer-controls { display: none; }
+
+body.house-v2 .doma-object360-inline:not([hidden]) {
+    position: absolute !important;
+    inset: 0 0 0 var(--image-start) !important;
+    width: calc(100% - var(--image-start)) !important;
+    height: 100% !important;
+    overflow: hidden;
+}
+
+body.house-v2 .project-gallery-placeholder:not([hidden]) {
+    inset: 0 0 0 var(--image-start);
+    width: calc(100% - var(--image-start));
+    height: 100%;
+}
 }

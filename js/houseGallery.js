@@ -590,6 +590,7 @@ if (visualContainer && fullscreenButton) {
 // On mobile, tapping the photo opens fullscreen; controls keep their own actions.
 if (mainImage && visualContainer) {
     mainImage.addEventListener("click", async () => {
+        if (document.body.classList.contains("house-v2")) return;
         if (!window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches) return;
         if (document.fullscreenElement === visualContainer) return;
         try {
@@ -761,25 +762,8 @@ function initMobileGallerySheet() {
     document.addEventListener("doma:gallery-change", render);
     if (window.domaGallery) render();
 
-    // Only horizontal swipes over the image area navigate photos.
-    let startX = 0, startY = 0, swipeArmed = false;
-    visualContainer?.addEventListener("touchstart", event => {
-        if (event.touches.length !== 1 || event.target.closest("button, .gallery-sheet, .gallery-landscape-albums")) return;
-        if (window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)").matches && !event.target.closest(".project-visual-image, .project-gallery-placeholder")) return;
-        swipeArmed = true;
-        startX = event.touches[0].clientX;
-        startY = event.touches[0].clientY;
-    }, { passive: true });
-    visualContainer?.addEventListener("touchend", event => {
-        if (!swipeArmed || event.changedTouches.length !== 1 || event.target.closest("button, .gallery-sheet, .gallery-landscape-albums")) return;
-        swipeArmed = false;
-        if (window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)").matches && !event.target.closest(".project-visual-image, .project-gallery-placeholder")) return;
-        const dx = event.changedTouches[0].clientX - startX;
-        const dy = event.changedTouches[0].clientY - startY;
-        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-            window.domaGallery?.step(dx < 0 ? 1 : -1);
-        }
-    }, { passive: true });
+    // house_2.js owns touch gestures for the v2 image stage.
+
 }
 
 initMobileGallerySheet();
