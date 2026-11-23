@@ -36,11 +36,90 @@ const object360Host = document.querySelector(".doma-object360-inline");
 const landscapeMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px) and (pointer: coarse)");
 let object360Instance = null;
 let object360Key = null;
+// v4: Shared visual transition for photo <-> Object360.
+// Read the same duration as CSS; no separate hard-coded 360 timing.
+let objectTransitionToken = 0;
+let objectTransitionObserver = null;
+let objectTransitionTimer = null;
+let pendingObjectSnapshot = null;
+let pendingSnapshotToken = 0;
+function transitionDuration() {
+    if (!document.body.classList.contains("house-v2")) return 0;
+    const value = getComputedStyle(visualContainer).getPropertyValue("--gallery-transition-duration").trim();
+    const number = parseFloat(value);
+    return Number.isFinite(number) ? number * (value.endsWith("s") && !value.endsWith("ms") ? 1000 : 1) : 650;
+}
+function cancelObjectTransition() {
+    ++objectTransitionToken;
+    objectTransitionObserver?.disconnect();
+    objectTransitionObserver = null;
+    clearTimeout(objectTransitionTimer);
+    visualContainer?.querySelectorAll(".doma-object-transition-snapshot").forEach(el => el.remove());
+    pendingObjectSnapshot = null;
+    if (object360Host) { object360Host.style.transition = ""; object360Host.style.opacity = ""; object360Host.style.pointerEvents = ""; }
+}
+function snapshotObject360() {
+    if (!document.body.classList.contains("house-v2") || object360Host?.hidden) return null;
+    const source = object360Host.querySelector("canvas");
+    if (!source || !source.width || !source.height) return null;
+    const snapshot = document.createElement("canvas");
+    snapshot.width = source.width;
+    snapshot.height = source.height;
+    snapshot.className = "doma-object-transition-snapshot";
+    try {
+        snapshot.getContext("2d")?.drawImage(source, 0, 0);
+    } catch (error) {
+        console.warn("Object360 snapshot unavailable:", error);
+        return null;
+    }
+    visualContainer.appendChild(snapshot);
+    return snapshot;
+}
+function fadeOutObjectSnapshot(snapshot, token) {
+    if (!snapshot || token !== objectTransitionToken) return;
+    const duration = transitionDuration();
+    snapshot.style.transition = `opacity ${duration}ms ease-in-out`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (token === objectTransitionToken) snapshot.style.opacity = "0";
+    }));
+    objectTransitionTimer = setTimeout(() => {
+        if (token === objectTransitionToken) snapshot.remove();
+    }, duration + 60);
+}
+function waitForObjectFirstFrame(token) {
+    const status = object360Host?.querySelector(".doma-object360-status");
+    if (!status) return;
+    const reveal = () => {
+        if (token !== objectTransitionToken || !status.hidden) return;
+        objectTransitionObserver?.disconnect();
+        objectTransitionObserver = null;
+        const duration = transitionDuration();
+        object360Host.style.transition = `opacity ${duration}ms ease-in-out`;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (token === objectTransitionToken) object360Host.style.opacity = "1";
+        }));
+        objectTransitionTimer = setTimeout(() => {
+            if (token !== objectTransitionToken) return;
+            mainImage.style.display = "none";
+            object360Host.style.pointerEvents = "";
+            object360Host.style.transition = "";
+        }, duration + 60);
+    };
+    objectTransitionObserver = new MutationObserver(reveal);
+    objectTransitionObserver.observe(status, { attributes: true, attributeFilter: ["hidden"] });
+    reveal();
+}
 function stopObject360() {
     object360Instance?.destroy();
     object360Instance = null;
     object360Key = null;
-    if (object360Host) { object360Host.hidden = true; object360Host.replaceChildren(); }
+    if (object360Host) {
+        object360Host.hidden = true;
+        object360Host.style.display = "none";
+        object360Host.style.opacity = "";
+        object360Host.style.pointerEvents = "";
+        object360Host.replaceChildren();
+    }
     visualContainer?.classList.remove("is-object360");
 }
 
@@ -63,25 +142,53 @@ async function initHouseGallery() {
         const objects360 = Object.entries(project.object360 || {}).filter(([, config]) => config && (config.path || config.file));
         const object360Labels = { house: "Дом 360°", bath: "Баня 360°", sauna: "Баня 360°" };
         const firstObjectKey = objects360[0]?.[0] ?? null;
+        // Warm up album covers while the visitor explores Object360.
+        const albumPreloads = new Map();
+        function preloadAlbumCovers() {
+            const paths = [
+                ...Object.entries(project.gallery || {}).flatMap(([, album]) =>
+                    Array.isArray(album) ? album.slice(0, 1) :
+                    Object.values(album || {}).flatMap(room => room?.images?.slice(0, 1) || [])
+                )
+            ];
+            for (const path of paths) {
+                if (!path || albumPreloads.has(path)) continue;
+                const image = new Image();
+                albumPreloads.set(path, image);
+                image.src = PROJECT_PATH + path;
+            }
+        }
 
         function selectObject360(key = firstObjectKey) {
             const config = project.object360?.[key];
             if (!config || !object360Host) return;
             if (activeView === "object360" && object360Key === key && object360Instance) return;
+            cancelObjectTransition();
             stopObject360();
+            const token = objectTransitionToken;
+            const animate = transitionDuration() > 0;
             activeView = "object360";
             activeRoom = null;
             activeImageIndex = 0;
             object360Key = key;
+            preloadAlbumCovers();
             ++imageRequestId;
             clearImageTransition();
-            mainImage.style.display = "none";
+            if (!animate) mainImage.style.display = "none";
             placeholder.hidden = true;
             thumbnailsContainer.style.display = "none";
+            object360Host.style.display = "";
             object360Host.hidden = false;
+            if (animate) {
+                object360Host.style.opacity = "0";
+                object360Host.style.pointerEvents = "none";
+            }
             visualContainer.classList.add("is-object360");
-            try { object360Instance = createObject360(object360Host, config, PROJECT_PATH); }
-            catch (error) { console.error(error); stopObject360(); }
+            try {
+                object360Instance = createObject360(object360Host, config, PROJECT_PATH);
+                if (animate) waitForObjectFirstFrame(token);
+            }
+            catch (error) { console.error(error); cancelObjectTransition(); stopObject360(); }
             document.dispatchEvent(new Event("doma:gallery-change"));
         }
         // Hide the 360° tab if this project has no configured objects.
@@ -98,6 +205,7 @@ function clearImageTransition() {
     if (!imageTransition) return;
     clearTimeout(imageTransition.timer);
     imageTransition.overlay.remove();
+    if (document.body.classList.contains("house-v2")) mainImage.style.visibility = "";
     imageTransition = null;
 }
 
@@ -105,6 +213,23 @@ function showImage(imagePath, alt) {
     const requestId = ++imageRequestId;
     const imageUrl = PROJECT_PATH + imagePath;
     clearImageTransition();
+    // Capture the visible 360 canvas before destroying its decoder.
+    // Fade the snapshot immediately; image loading must not hold it on screen.
+    let objectSnapshot = pendingObjectSnapshot;
+    let snapshotToken = pendingObjectSnapshot ? pendingSnapshotToken : objectTransitionToken;
+    pendingObjectSnapshot = null;
+    if (object360Instance && transitionDuration() > 0) {
+        cancelObjectTransition();
+        snapshotToken = objectTransitionToken;
+        objectSnapshot = snapshotObject360();
+        stopObject360();
+    } else if (object360Instance) {
+        // No animation (or reduced motion): always release the 360 viewer.
+        cancelObjectTransition();
+        stopObject360();
+    }
+    // Start the transition now, not inside preloadImage.onload (which may take seconds).
+    fadeOutObjectSnapshot(objectSnapshot, snapshotToken);
 
     const preloadImage = new Image();
     preloadImage.onload = () => {
@@ -130,7 +255,7 @@ function showImage(imagePath, alt) {
             placeholder.hidden = true;
             thumbnailsContainer.style.display = "";
         }
-        if (mainImage.style.display === "none" || !mainImage.complete || !mainImage.naturalWidth) {
+        if (objectSnapshot || mainImage.style.display === "none" || !mainImage.complete || !mainImage.naturalWidth) {
             commit();
             return;
         }
@@ -144,6 +269,7 @@ function showImage(imagePath, alt) {
         overlay.alt = "";
         overlay.setAttribute("aria-hidden", "true");
         applyFraming(overlay);
+        if (document.body.classList.contains("house-v2")) mainImage.style.visibility = "hidden";
         visualContainer.appendChild(overlay);
         const transition = { overlay, timer: null };
         imageTransition = transition;
@@ -156,10 +282,14 @@ function showImage(imagePath, alt) {
             if (requestId !== imageRequestId || imageTransition !== transition) return;
             commit();
             clearImageTransition();
-        }, 420);
+        }, document.body.classList.contains("house-v2") ? transitionDuration() : 420);
     };
     preloadImage.onerror = () => {
-        if (requestId === imageRequestId) console.error("Не удалось загрузить изображение:", imageUrl);
+        if (requestId === imageRequestId) {
+            console.error("Не удалось загрузить изображение:", imageUrl);
+            objectSnapshot?.remove();
+            stopObject360();
+        }
     };
     preloadImage.src = imageUrl;
 }
@@ -167,6 +297,8 @@ function showImage(imagePath, alt) {
 
         // Пустая категория
         function showPlaceholder() {
+            cancelObjectTransition();
+            stopObject360();
             ++imageRequestId;
             clearImageTransition();
             mainImage.style.display = "none";
@@ -214,7 +346,21 @@ function showImage(imagePath, alt) {
 
         // Обычная галерея: экстерьер, планы, окружение
         function showGallery(view) {
-            if (view !== "object360") stopObject360();
+            // Leave the 360 viewer before changing the active album state.
+            // Keep only a static snapshot for the transition, never the live canvas.
+            if (view !== "object360" && object360Instance) {
+                cancelObjectTransition();
+                pendingObjectSnapshot = transitionDuration() > 0 ? snapshotObject360() : null;
+                pendingSnapshotToken = objectTransitionToken;
+                stopObject360();
+                if (pendingObjectSnapshot) {
+                    const snapshot = pendingObjectSnapshot;
+                    setTimeout(() => {
+                        snapshot.remove();
+                        if (pendingObjectSnapshot === snapshot) pendingObjectSnapshot = null;
+                    }, 3000);
+                }
+            }
             activeView = view;
             activeRoom = null;
             activeImageIndex = 0;
@@ -300,7 +446,7 @@ function showImage(imagePath, alt) {
 
         // Уровень 2: рендеры выбранной комнаты
         function showRoomGallery(roomId) {
-            stopObject360();
+            if (!document.body.classList.contains("house-v2")) stopObject360();
             const room = project.gallery?.interior?.[roomId];
 
             if (!room || !Array.isArray(room.images) || !room.images.length) {
@@ -468,7 +614,12 @@ document.addEventListener("fullscreenchange", () => {
             const preview = gallery.project.mobilePreviews?.[imagePath] ?? {};
             const isPortrait = window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches;
             const isFullscreen = document.fullscreenElement === visualContainer;
-            mainImage.style.objectFit = isFullscreen && isPortrait ? "contain" : isPortrait ? "cover" : "";
+            const isV2 = document.body.classList.contains("house-v2");
+            const ratio = mainImage.naturalHeight ? mainImage.naturalWidth / mainImage.naturalHeight : 1;
+            const desktopFit = ratio >= 1.5 ? "cover" : "contain";
+            mainImage.style.objectFit = isV2
+                ? (isFullscreen ? "contain" : isPortrait ? "cover" : desktopFit)
+                : (isFullscreen && isPortrait ? "contain" : isPortrait ? "cover" : "");
             mainImage.style.objectPosition = isFullscreen ? "50% 50%" : isPortrait ? `${preview.x ?? 50}% ${preview.y ?? 50}%` : "50% 50%";
             mainImage.style.transform = isFullscreen ? "none" : isPortrait ? `scale(${Math.min(3, Math.max(1, Number(preview.scale) || 1))})` : "";
         }

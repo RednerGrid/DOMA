@@ -1,0 +1,85 @@
+:root{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#17191a}*{box-sizing:border-box}body{margin:0}button,a{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.house-v2{overflow:hidden}.house-v2 .site-header{height:64px;position:fixed;z-index:30;top:0;left:0;right:0;background:rgba(21,22,23,.87);display:flex;align-items:center;justify-content:space-between;padding:0 36px;gap:30px}.brand{font-size:25px;white-space:nowrap}.brand strong{letter-spacing:.015em}.header-links{display:flex;align-items:center;gap:54px}.header-links a{font-size:14px;opacity:.86;padding:21px 0}.header-links .current{border-bottom:2px solid white;opacity:1}.request-link{font-size:14px;border:1px solid #eee;border-radius:20px;padding:10px 23px;white-space:nowrap}.burger{display:none;background:none;border:0;color:white;font-size:24px}.house-v2 .project-visual{position:relative;width:100%;height:100dvh;min-height:520px;background:#17191a;overflow:hidden}.project-visual-image,.hero-cover{position:absolute;inset:64px 0 0 0;width:100%;height:calc(100% - 64px)}.project-visual-image{object-fit:cover;object-position:center;z-index:0}.hero-cover{z-index:1;background-image:url('../projects/barn80/assets/hero.jpg');background-position:center;background-size:cover;transition:opacity .55s ease}.hero-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 47%,rgba(13,15,17,.58) 100%)}.house-v2.is-browsing .hero-cover{opacity:0;pointer-events:none}.gallery-landscape-albums{position:absolute;z-index:8;top:64px;bottom:0;left:0;width:250px;background:linear-gradient(90deg,rgba(19,20,21,.95),rgba(19,20,21,.84));overflow:auto;scrollbar-width:thin}.gallery-landscape-list{display:flex;flex-direction:column;gap:10px;padding:20px 16px 28px}.gallery-landscape-album{display:flex;align-items:center;gap:14px;width:100%;min-height:74px;padding:7px 10px;background:transparent;border:1px solid transparent;border-radius:12px;color:white;text-align:left;font-size:13px;font-weight:700;text-transform:uppercase}.gallery-landscape-album.active{border-color:white;background:rgba(255,255,255,.09)}.gallery-landscape-preview{width:88px;height:62px;border-radius:8px;overflow:hidden;flex:none;background:#343434}.gallery-landscape-preview img{width:100%;height:100%;object-fit:cover;display:block}.project-intro{position:absolute;z-index:6;top:calc(64px + 5vh);right:4.5%;width:min(440px,32vw);transition:opacity .4s ease,transform .4s ease;pointer-events:auto}.eyebrow{font-size:13px;font-weight:700;letter-spacing:.035em}.eyebrow span{padding-left:24px;color:#ccc}.project-intro h1{font-size:clamp(38px,3.7vw,67px);line-height:1.06;letter-spacing:-.035em;margin:12px 0 20px}.project-lead{font-size:clamp(15px,1.12vw,19px);line-height:1.5;max-width:430px;color:#e5e5e5;margin:0 0 30px}.project-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 34px}.project-facts>div{display:flex;flex-direction:column;gap:5px}.fact-icon{font-size:27px;line-height:1.1}.project-facts strong{font-size:19px;white-space:nowrap}.project-facts small{font-size:12px}.vr-cta{background:linear-gradient(#fff,#e7e7e7);color:#171717;border:0;border-radius:15px;padding:18px 35px;font-weight:700;font-size:17px;box-shadow:0 8px 24px #0004}.vr-cta span{margin-right:15px}.house-v2.is-browsing .project-intro{opacity:0;transform:translateX(22px);pointer-events:none}.info-toggle{position:absolute;z-index:10;top:calc(64px + 24px);right:34px;width:46px;height:46px;border:2px solid white;border-radius:50%;background:rgba(0,0,0,.22);color:white;font-family:Georgia,serif;font-size:28px}.info-toggle[hidden]{display:none}.gallery-progress{position:absolute;z-index:9;left:282px;bottom:28px;display:flex;align-items:center;gap:22px;font-weight:700;font-size:17px;text-shadow:0 2px 6px #0008}.gallery-progress-dots{display:flex;align-items:center;gap:10px}.gallery-progress-dot{width:9px;height:9px;border:1px solid white;border-radius:50%;background:transparent;display:block}.gallery-progress-dot.active{background:white}.viewer-controls{position:absolute;z-index:9;right:30px;bottom:23px;display:flex;gap:12px}.viewer-controls button{width:52px;height:40px;border:1px solid #eee;border-radius:24px;background:rgba(0,0,0,.32);color:white;font-size:22px}.viewer-controls .project-fullscreen{margin-left:15px}.project-visual-menu,.project-visual-bottom{display:none!important}.doma-object360-inline:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;background:#1a1a1a}.project-gallery-placeholder:not([hidden]){position:absolute;inset:64px 0 0 250px;z-index:2;display:grid;place-items:center;background:#252525}.vr-dialog:not([hidden]){position:fixed;z-index:100;inset:0;background:#000a;display:grid;place-items:center;padding:20px}.vr-dialog-panel{position:relative;width:min(450px,100%);padding:38px;background:#252525;border:1px solid #777;border-radius:15px;line-height:1.6}.vr-close{position:absolute;right:14px;top:9px;border:0;background:none;color:white;font-size:30px}@media(max-width:900px){.header-links{gap:18px}.gallery-landscape-albums{width:155px}.gallery-landscape-list{padding:12px 8px}.gallery-landscape-album{flex-direction:column;gap:5px;text-align:center;font-size:11px}.gallery-landscape-preview{width:100%;height:65px}.project-intro{width:43vw;right:3%}.gallery-progress{left:175px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:155px}}@media(max-width:650px){.house-v2 .site-header{padding:0 18px}.header-links,.request-link{display:none}.burger{display:block}.gallery-landscape-albums{width:108px}.gallery-landscape-preview{height:55px}.project-intro{width:calc(100% - 150px);top:100px}.project-intro h1{font-size:32px}.project-lead{font-size:13px}.project-facts{grid-template-columns:repeat(2,1fr);gap:12px}.vr-cta{padding:12px;font-size:13px}.gallery-progress{left:125px;bottom:80px}.doma-object360-inline:not([hidden]),.project-gallery-placeholder:not([hidden]){left:108px}}
+
+/* v2: hide gallery controls until a user chooses an album. */
+.house-v2:not(.is-browsing) .gallery-progress,
+.house-v2:not(.is-browsing) .viewer-controls { display:none !important; }
+
+/* v2: center thumbnail labels below images; preserve sidebar width. */
+.house-v2 .gallery-landscape-albums {
+  background:transparent;
+  isolation:isolate;
+}
+.house-v2 .gallery-landscape-albums::before {
+  content:"";position:fixed;left:0;top:64px;bottom:0;width:350px;
+  pointer-events:none;z-index:-1;
+  background:linear-gradient(90deg,rgba(13,14,15,.85) 0%,rgba(13,14,15,.64) 46%,rgba(13,14,15,0) 100%);
+  -webkit-backdrop-filter:blur(2px);
+  backdrop-filter:blur(2px);
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 45%,transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0%,#000 45%,transparent 100%);
+}
+.house-v2 .gallery-landscape-list {align-items:center;gap:7px;}
+.house-v2 .gallery-landscape-album {
+  flex-direction:column;justify-content:center;align-items:center;gap:6px;
+  width:160px;min-height:105px;padding:7px 9px;text-align:center;
+}
+.house-v2 .gallery-landscape-preview {width:110px;height:75px;}
+.house-v2 .gallery-landscape-album > span {font-size:11px;line-height:1.2;}
+
+/* v2: Object360 occupies the entire available viewer, right aligned by its renderer. */
+.house-v2 .doma-object360-inline:not([hidden]) {
+  inset:64px 0 0 0 !important;
+  width:100% !important;height:calc(100% - 64px) !important;
+  overflow:hidden;background:#17191a;
+}
+.house-v2 .doma-object360-inline .doma-object360-canvas {
+  display:block;position:absolute;inset:0;width:100% !important;height:100% !important;
+  max-width:none !important;max-height:none !important;touch-action:pan-y;
+}
+.house-v2 .doma-object360-inline .doma-object360-status {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;}
+@media(max-width:900px){.house-v2 .gallery-landscape-album{width:min(135px,100%)}.house-v2 .gallery-landscape-preview{width:min(110px,100%);height:70px}}
+@media(max-width:650px){.house-v2 .gallery-landscape-album{width:100%;min-height:85px}.house-v2 .gallery-landscape-preview{width:80px;height:52px}.house-v2 .gallery-landscape-albums::before{width:180px}}
+
+
+/* v3: selected album grows smoothly without reflowing the sidebar. */
+.house-v2 .gallery-landscape-album {
+  transform:scale(1);
+  transition:transform 400ms ease-in-out, background-color 400ms ease-in-out, border-color 400ms ease-in-out;
+  transform-origin:center;
+  will-change:transform;
+}
+.house-v2 .gallery-landscape-album.active { transform:scale(1.06); }
+.house-v2 .gallery-landscape-list {gap:13px; padding-left:22px; padding-right:22px;}
+
+/* v3: a new image fades in over an opaque dark stage, never over the previous image. */
+.house-v2 .project-visual-image,
+.house-v2 .gallery-crossfade-image {
+  position:absolute;
+  inset:64px 0 0 0;
+  width:100%;height:calc(100% - 64px);
+  max-width:none;max-height:none;
+}
+.house-v2 .gallery-crossfade-image {
+  z-index:3;
+  background:#17191a;
+  opacity:0;
+  transition:opacity 400ms ease-in-out;
+  pointer-events:none;
+}
+.house-v2 .gallery-crossfade-image.is-visible {opacity:1;}
+.house-v2 .viewer-controls button[hidden],
+.house-v2 .gallery-progress[hidden] {display:none!important;}
+@media(prefers-reduced-motion:reduce){
+  .house-v2 .gallery-landscape-album,
+  .house-v2 .gallery-crossfade-image {transition-duration:0ms;}
+}
+
+/* v4: Object360 uses the same transition duration as the image gallery. */
+.house-v2 .project-visual { --gallery-transition-duration: 650ms; }
+.house-v2 .doma-object-transition-snapshot {
+  position:absolute; inset:64px 0 0 0; width:100%; height:calc(100% - 64px);
+  z-index:4; pointer-events:none; opacity:1; object-fit:fill;
+}
+@media (prefers-reduced-motion:reduce) {
+  .house-v2 .project-visual { --gallery-transition-duration: 0ms; }
+}

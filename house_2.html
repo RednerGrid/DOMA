@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Барнхаус 80 — DOMA</title>
+<link rel="stylesheet" href="./css/house_2.css">
+</head>
+<body class="house-page house-v2">
+<header class="site-header">
+  <a class="brand" href="./index.html">⌂ <strong>DOMA</strong></a>
+  <nav class="header-links" aria-label="Навигация"><a href="./index.html#projects" class="current">Проекты</a><a href="./index.html#about">О платформе</a><a href="./index.html#how">Как это работает</a></nav>
+  <a class="request-link" href="./index.html#contact">Оставить заявку</a>
+  <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false">☰</button>
+</header>
+<main>
+<section class="project-visual" aria-label="Интерактивная галерея Барнхаус 80">
+  <img class="project-visual-image" src="./projects/barn80/assets/exterior/exterior-01.jpg" alt="Барнхаус 80">
+  <div class="hero-cover" aria-hidden="true"></div>
+  <div class="project-gallery-placeholder" hidden>Изображения пока не добавлены</div>
+  <div class="doma-object360-inline" hidden></div>
+  <div class="project-visual-menu" hidden aria-hidden="true"><button data-view="exterior" class="active">Экстерьер</button><button data-view="interior">Интерьер</button><button data-view="object360">360°</button><button data-view="plans">Планировки</button><button data-view="surroundings">Окружение</button></div>
+  <nav class="gallery-landscape-albums" aria-label="Альбомы проекта"><div class="gallery-landscape-list"></div></nav>
+  <aside class="project-intro" aria-label="О проекте">
+    <div class="eyebrow">ПРОЕКТ DOMA <span>—</span></div>
+    <h1>Барнхаус 80</h1>
+    <p class="project-lead">Современный загородный дом в архитектуре барнхаус. Комфортное пространство для жизни на природе круглый год.</p>
+    <div class="project-facts"><div><span class="fact-icon">▣</span><strong>80 м²</strong><small>Площадь</small></div><div><span class="fact-icon">▤</span><strong>2</strong><small>Спальни</small></div><div><span class="fact-icon">♧</span><strong>1</strong><small>Санузел</small></div><div><span class="fact-icon">⌂</span><strong>1 этаж</strong><small>Этажность</small></div></div>
+    <button class="vr-cta" type="button"><span>▶</span> VR-тур по дому</button>
+  </aside>
+  <button class="info-toggle" type="button" aria-label="Показать информацию о доме" title="Информация о доме" hidden>i</button>
+  <div class="gallery-progress" aria-live="polite"><span class="gallery-progress-count">1 / 5</span><div class="gallery-progress-dots"></div></div>
+  <div class="viewer-controls"><button class="prev-frame" type="button" aria-label="Предыдущий кадр">←</button><button class="next-frame" type="button" aria-label="Следующий кадр">→</button><button class="project-fullscreen" type="button" aria-label="Полный экран">⛶</button></div>
+  <div class="project-visual-bottom" hidden><div class="project-thumbnails"></div></div>
+</section>
+</main>
+<div class="vr-dialog" hidden><div class="vr-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="vr-title"><button class="vr-close" aria-label="Закрыть">×</button><h2 id="vr-title">VR-тур по дому</h2><p>Плавное приближение и переход в Viewer подключим следующим этапом. Сейчас кнопка — демонстрационная.</p></div></div>
+<script type="module" src="./js/houseGallery.js"></script>
+<script type="module" src="./js/house_2.js"></script>
+</body></html>
