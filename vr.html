@@ -8,11 +8,10 @@
   <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false">☰</button>
 </header>
 <main class="vr-stage" aria-label="VR-тур по дому">
-<img class="vr-image" src="./projects/barn80/vr/overview/hero-exterior.jpg" alt="Обзор участка">
-<nav class="vr-rail" aria-label="Разделы тура"><div class="vr-list">
-<button class="vr-section" data-section="yard" type="button" aria-pressed="false"><img src="./projects/barn80/vr/overview/hero-exterior.jpg" alt=""><span>Участок</span></button>
-<button class="vr-section" data-section="interior" type="button" aria-pressed="false"><img src="./projects/barn80/assets/interior/living/living-01.png" alt=""><span>Интерьер</span></button>
-</div></nav>
+<img class="vr-image" alt="" hidden>
+<div class="vr-panorama" hidden></div>
+<p class="vr-status" role="status" style="position:absolute;top:40%;left:25%;right:15%;text-align:center">Загрузка тура…</p>
+<nav class="vr-rail" aria-label="Разделы тура" hidden><div class="vr-list"></div></nav>
 <button class="vr-collapse" type="button" aria-label="Скрыть интерфейс" aria-expanded="true">‹</button>
 <button class="vr-fullscreen" type="button" aria-label="Полный экран">⛶</button>
-</main><script type="module" src="./js/vr.js"></script></body></html>
+</main><script src="./libs/three.min.js"></script><script type="module" src="./js/vr.js"></script></body></html>

@@ -1,0 +1,34 @@
+{
+  "name": "Барнхаус 80",
+  "startScene": "hero-exterior",
+  "sections": [
+    {
+      "id": "yard",
+      "title": "Участок",
+      "startScene": "hero-exterior"
+    },
+    {
+      "id": "interior",
+      "title": "Интерьер",
+      "startScene": "living-pano-01",
+      "preview": "../assets/interior/living/living-01.png"
+    }
+  ],
+  "scenes": {
+    "hero-exterior": {
+      "type": "overview",
+      "title": "Обзор участка",
+      "image": "overview/hero-exterior.jpg"
+    },
+    "living-pano-01": {
+      "type": "panorama",
+      "title": "Гостиная",
+      "image": "panoramas/Pano_01.jpg",
+      "view": {
+        "yaw": 90,
+        "pitch": 0,
+        "fov": 50
+      }
+    }
+  }
+}
