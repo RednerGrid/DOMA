@@ -258,5 +258,39 @@
         }
       ]
     }
+  },
+  "maps": {
+    "yard": {
+      "image": "maps/yard.png",
+      "yawOffset": 0,
+      "points": {
+        "yard-pano-01": {
+          "x": 0.92,
+          "y": 0.38
+        },
+        "yard-pano-02": {
+          "x": 0.55,
+          "y": 0.25
+        },
+        "yard-pano-03": {
+          "x": 0.43,
+          "y": 0.73
+        }
+      }
+    },
+    "interior": {
+      "image": "maps/interior.jpg",
+      "yawOffset": 180,
+      "points": {
+        "living-pano-01": {
+          "x": 0.59,
+          "y": 0.55
+        },
+        "bathroom-pano-01": {
+          "x": 0.45,
+          "y": 0.25
+        }
+      }
+    }
   }
 }

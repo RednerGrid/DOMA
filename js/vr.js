@@ -1,3 +1,4 @@
+import { createMinimap } from "./vr/ui/minimap.js";
 import { createOverview } from "./vr/modules/overviewViewer.js";
 import { createPanorama } from "./vr/modules/panoramaViewer.js";
 // Stage 2: project configuration and static scene previews.
@@ -19,7 +20,7 @@ collapse.addEventListener('click', () => {
   collapse.textContent = clean ? '›' : '‹';
   collapse.setAttribute('aria-expanded', String(!clean));
   collapse.setAttribute('aria-label', clean ? 'Показать интерфейс' : 'Скрыть интерфейс');
-  for (const el of document.querySelectorAll('.site-header,.vr-rail,.vr-fullscreen')) el.inert = clean;
+  for (const el of document.querySelectorAll('.site-header,.vr-rail,.vr-fullscreen,.vr-minimap')) el.inert = clean;
   setMenu(false);
 });
 if (!document.fullscreenEnabled || !document.documentElement.requestFullscreen) fullscreen.hidden = true;
@@ -49,6 +50,8 @@ async function initTour() {
   const asset = path => new URL(path, configURL).href;
   const available = (tour.sections || []).filter(section => scenes[section.startScene]?.image);
   const buttons = new Map();
+  const minimap = createMinimap(document.querySelector(".vr-stage"), tour.maps, asset, id => openScene(id, null, "crossfade").catch(showError));
+  minimap.setClean(page.classList.contains("is-clean"));
   async function openScene(id, sectionId = null, transition = "instant", arrivalView = null) {
     const scene = scenes[id];
     if (!scene?.image) throw new Error(`Сцена недоступна: ${id}`);
@@ -95,6 +98,7 @@ async function initTour() {
     if (nextPanorama) nextPanorama.start();
     else { image.src = probe.src; image.alt = scene.title || ''; nextOverview?.start(); }
     if (fade) { const animation = fade.animate([{opacity:1},{opacity:0}], {duration:matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400}); animation.finished.then(() => fade.remove(), () => fade.remove()); }
+    minimap.show(sectionId, id, nextPanorama ? nextPanorama.getView : null);
     status.hidden = true;
     for (const [key, button] of buttons) button.setAttribute('aria-pressed', String(key === sectionId));
   }
