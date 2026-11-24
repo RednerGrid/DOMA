@@ -49,7 +49,7 @@ async function initTour() {
   const asset = path => new URL(path, configURL).href;
   const available = (tour.sections || []).filter(section => scenes[section.startScene]?.image);
   const buttons = new Map();
-  async function openScene(id, sectionId = null, transition = "instant") {
+  async function openScene(id, sectionId = null, transition = "instant", arrivalView = null) {
     const scene = scenes[id];
     if (!scene?.image) throw new Error(`Сцена недоступна: ${id}`);
     const current = ++requestId;
@@ -58,7 +58,10 @@ async function initTour() {
     let nextOverview;
     try {
       if (scene.type === 'panorama') {
-        nextPanorama = await createPanorama(panoramaHost, asset(scene.image), scene.view);
+        nextPanorama = await createPanorama(panoramaHost, asset(scene.image), arrivalView || scene.view, (scene.gates || []).filter(g=>scenes[g.targetScene]?.image), gate => {
+          const view = activePanorama.getView();
+          openScene(gate.targetScene, sectionId, gate.transition || "crossfade", {...view, yaw: view.yaw + (gate.yawOffset || 0)}).catch(showError);
+        });
       } else {
         probe = new Image();
         probe.src = asset(scene.image);
@@ -75,7 +78,11 @@ async function initTour() {
       throw error;
     }
     if (current !== requestId) { nextPanorama?.destroy(); nextOverview?.destroy(); return; }
-    const fade = transition === "crossfade" && !image.hidden ? image.cloneNode() : null;
+    let fade = null;
+    if (transition === "crossfade") {
+      if (!image.hidden) fade = image.cloneNode();
+      else if (activePanorama) { fade = image.cloneNode(); fade.src = activePanorama.snapshot(); fade.hidden = false; }
+    }
     if (fade) { fade.classList.add("vr-scene-fade"); image.after(fade); }
     activeOverview?.destroy();
     activeOverview = nextOverview;

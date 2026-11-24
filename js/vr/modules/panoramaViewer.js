@@ -1,5 +1,6 @@
+import {createPanoramaGates} from './panoramaGates.js';
 // Camera and pointer mechanics ported from the original Viewer.
-export async function createPanorama(viewerRef, url, view = {}) {
+export async function createPanorama(viewerRef, url, view = {}, gates = [], onGate = () => {}) {
   const THREE = window.THREE;
   const activePointers = new Map();
   const MOUSE_SENSITIVITY = 0.18;
@@ -18,6 +19,7 @@ export async function createPanorama(viewerRef, url, view = {}) {
   const material = new THREE.MeshBasicMaterial({map:texture});
   scene3d.add(new THREE.Mesh(geometry,material));
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  let gateLayer;
   let observer, started = false, disposed = false;
   function resize() {
     const w = viewerRef.clientWidth, h = viewerRef.clientHeight;
@@ -29,13 +31,13 @@ export async function createPanorama(viewerRef, url, view = {}) {
     started = true;
     viewerRef.append(renderer.domElement);
     resize(); observer = new ResizeObserver(resize); observer.observe(viewerRef);
-    addControls(viewerRef); animate();
+    addControls(viewerRef); gateLayer = createPanoramaGates(scene3d,camera,viewerRef,gates,onGate); animate();
   }
   function destroy() {
     if (disposed) return;
     disposed = true;
     if (started) { removeControls(); observer.disconnect(); cancelAnimationFrame(animationId); }
-    activePointers.clear(); texture.dispose(); material.dispose(); geometry.dispose();
+    gateLayer?.destroy(); activePointers.clear(); texture.dispose(); material.dispose(); geometry.dispose();
     renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
   }
 function addControls(viewer) {
@@ -160,10 +162,11 @@ function animate() {
   pitch: Number(lat.toFixed(1))
 }; // временная для координат
   
+  gateLayer?.update();
   renderer.render(scene3d, camera);
 
 }
 
 
-  return {start,destroy};
+  return {start,destroy,getView:()=>({yaw:lon,pitch:lat,fov:camera.fov}),snapshot:()=>{renderer.render(scene3d,camera);return renderer.domElement.toDataURL();}};
 }

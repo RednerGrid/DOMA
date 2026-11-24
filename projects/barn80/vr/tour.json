@@ -33,12 +33,48 @@
     "living-pano-01": {
       "type": "panorama",
       "title": "Гостиная",
-      "image": "panoramas/Pano_01.jpg",
+      "image": "panoramas/Pano_living.png",
       "view": {
         "yaw": 90,
         "pitch": 0,
         "fov": 50
-      }
+      },
+      "gates": [
+        {
+          "id": "to-bathroom",
+          "yaw": 20,
+          "pitch": -16,
+          "distance": 100,
+          "width": 120,
+          "rotation": 0,
+          "targetScene": "bathroom-pano-01",
+          "transition": "crossfade",
+          "yawOffset": 0
+        }
+      ]
+    },
+    "bathroom-pano-01": {
+      "type": "panorama",
+      "title": "Санузел",
+      "image": "panoramas/Pano_bathroom.png",
+      "view": {
+        "yaw": 90,
+        "pitch": 0,
+        "fov": 50
+      },
+      "gates": [
+        {
+          "id": "to-living",
+          "yaw": 278,
+          "pitch": -27,
+          "distance": 100,
+          "width": 120,
+          "rotation": 0,
+          "targetScene": "living-pano-01",
+          "transition": "crossfade",
+          "yawOffset": 0
+        }
+      ]
     }
   }
 }
