@@ -1,7 +1,6 @@
 // house_2 is a presentation layer over the existing houseGallery.js state.
 const page = document.body;
 const info = document.querySelector('.info-toggle');
-const dialog = document.querySelector('.vr-dialog');
 const hideIntro = () => { page.classList.add('is-browsing'); info.hidden = false; };
 const showIntro = () => { page.classList.remove('is-browsing'); info.hidden = true; };
 // Only user-initiated navigation hides the description; initial gallery loading does not.
@@ -14,11 +13,7 @@ for (const [selector, direction] of [['.prev-frame',-1],['.next-frame',1]]) {
   });
 }
 info.addEventListener('click', showIntro);
-document.querySelector('.vr-cta')?.addEventListener('click', () => { hideIntro(); dialog.hidden = false; });
-const closeDialog = () => { dialog.hidden = true; };
-document.querySelector('.vr-close')?.addEventListener('click', closeDialog);
-dialog.addEventListener('click', e => { if (e.target === dialog) closeDialog(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDialog(); });
+document.querySelector('.vr-cta')?.addEventListener('click', () => { window.location.href = './vr.html'; });
 const burger = document.querySelector('.burger');
 const nav = document.querySelector('.header-links');
 function setMenuOpen(open) {
@@ -71,7 +66,6 @@ document.addEventListener('doma:gallery-change', updateV3GalleryControls);
 // Keyboard arrows work in both regular and fullscreen viewing modes.
 document.addEventListener('keydown', event => {
   if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-  if (dialog && !dialog.hidden) return;
   if (event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
   if (!page.classList.contains('is-browsing')) return;
