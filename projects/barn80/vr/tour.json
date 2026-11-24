@@ -5,7 +5,8 @@
     {
       "id": "yard",
       "title": "Участок",
-      "startScene": "hero-exterior"
+      "startScene": "yard-pano-01",
+      "preview": "overview/hero-exterior.jpg"
     },
     {
       "id": "interior",
@@ -24,11 +25,12 @@
           "id": "house",
           "mask": "overview/hero-exterior_idmap.png",
           "hover": "overview/hero-exterior_hover.png",
-          "targetScene": "living-pano-01",
-          "targetSection": "interior",
+          "targetScene": "yard-pano-02",
+          "targetSection": "yard",
           "transition": "crossfade"
         }
-      ]
+      ],
+      "section": null
     },
     "living-pano-01": {
       "type": "panorama",
@@ -50,8 +52,25 @@
           "targetScene": "bathroom-pano-01",
           "transition": "crossfade",
           "yawOffset": 0
+        },
+        {
+          "id": "to-yard-pano-02",
+          "yaw": 164,
+          "pitch": -13,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-02",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 0,
+            "pitch": 0,
+            "fov": 50
+          }
         }
-      ]
+      ],
+      "section": "interior"
     },
     "bathroom-pano-01": {
       "type": "panorama",
@@ -73,6 +92,169 @@
           "targetScene": "living-pano-01",
           "transition": "crossfade",
           "yawOffset": 0
+        }
+      ],
+      "section": "interior"
+    },
+    "yard-pano-01": {
+      "type": "panorama",
+      "title": "Вход на участок",
+      "image": "panoramas/yard-pano-01.jpg",
+      "section": "yard",
+      "view": {
+        "yaw": 180,
+        "pitch": 0,
+        "fov": 50
+      },
+      "gates": [
+        {
+          "id": "to-yard-pano-02",
+          "yaw": 190,
+          "pitch": -8,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-02",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 180,
+            "pitch": 0,
+            "fov": 50
+          }
+        },
+        {
+          "id": "to-yard-pano-03",
+          "yaw": 160,
+          "pitch": -8,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-03",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 180,
+            "pitch": 0,
+            "fov": 50
+          }
+        },
+        {
+          "id": "to-hero-exterior",
+          "yaw": 0,
+          "pitch": -15,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "hero-exterior",
+          "transition": "crossfade",
+          "yawOffset": 0
+        }
+      ]
+    },
+    "yard-pano-02": {
+      "type": "panorama",
+      "title": "Перед домом",
+      "image": "panoramas/yard-pano-02.jpg",
+      "section": "yard",
+      "view": {
+        "yaw": 180,
+        "pitch": 0,
+        "fov": 50
+      },
+      "gates": [
+        {
+          "id": "to-yard-pano-01",
+          "yaw": 12,
+          "pitch": -12,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-01",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 10,
+            "pitch": 0,
+            "fov": 50
+          }
+        },
+        {
+          "id": "to-yard-pano-03",
+          "yaw": 125,
+          "pitch": -12,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-03",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 180,
+            "pitch": 0,
+            "fov": 50
+          }
+        },
+        {
+          "id": "to-living-pano-01",
+          "yaw": 180,
+          "pitch": -9,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "living-pano-01",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 90,
+            "pitch": 0,
+            "fov": 50
+          }
+        }
+      ]
+    },
+    "yard-pano-03": {
+      "type": "panorama",
+      "title": "Зона отдыха",
+      "image": "panoramas/yard-pano-03.jpg",
+      "section": "yard",
+      "view": {
+        "yaw": 180,
+        "pitch": 0,
+        "fov": 50
+      },
+      "gates": [
+        {
+          "id": "to-yard-pano-01",
+          "yaw": 330,
+          "pitch": -10,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-01",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 10,
+            "pitch": 0,
+            "fov": 50
+          }
+        },
+        {
+          "id": "to-yard-pano-02",
+          "yaw": 265,
+          "pitch": -10,
+          "distance": 100,
+          "width": 55,
+          "rotation": 0,
+          "targetScene": "yard-pano-02",
+          "transition": "crossfade",
+          "yawOffset": 0,
+          "arrivalView": {
+            "yaw": 180,
+            "pitch": 0,
+            "fov": 50
+          }
         }
       ]
     }

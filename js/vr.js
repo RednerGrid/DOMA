@@ -52,6 +52,8 @@ async function initTour() {
   async function openScene(id, sectionId = null, transition = "instant", arrivalView = null) {
     const scene = scenes[id];
     if (!scene?.image) throw new Error(`Сцена недоступна: ${id}`);
+    // Explicit scene membership takes precedence over the originating section.
+    if (Object.prototype.hasOwnProperty.call(scene, 'section')) sectionId = scene.section;
     const current = ++requestId;
     let nextPanorama = null;
     let probe;
@@ -60,7 +62,7 @@ async function initTour() {
       if (scene.type === 'panorama') {
         nextPanorama = await createPanorama(panoramaHost, asset(scene.image), arrivalView || scene.view, (scene.gates || []).filter(g=>scenes[g.targetScene]?.image), gate => {
           const view = activePanorama.getView();
-          openScene(gate.targetScene, sectionId, gate.transition || "crossfade", {...view, yaw: view.yaw + (gate.yawOffset || 0)}).catch(showError);
+          openScene(gate.targetScene, sectionId, gate.transition || "crossfade", gate.arrivalView || {...view, yaw: view.yaw + (gate.yawOffset || 0)}).catch(showError);
         });
       } else {
         probe = new Image();
@@ -109,7 +111,7 @@ async function initTour() {
     const label = document.createElement('span');
     label.textContent = section.title;
     button.append(preview, label);
-    button.addEventListener('click', () => openScene(section.startScene, section.id).catch(showError));
+    button.addEventListener('click', () => openScene(section.startScene, section.id, "crossfade").catch(showError));
     list.append(button);
     buttons.set(section.id, button);
   }
