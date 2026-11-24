@@ -18,7 +18,17 @@
     "hero-exterior": {
       "type": "overview",
       "title": "Обзор участка",
-      "image": "overview/hero-exterior.jpg"
+      "image": "overview/hero-exterior.jpg",
+      "objects": [
+        {
+          "id": "house",
+          "mask": "overview/hero-exterior_idmap.png",
+          "hover": "overview/hero-exterior_hover.png",
+          "targetScene": "living-pano-01",
+          "targetSection": "interior",
+          "transition": "crossfade"
+        }
+      ]
     },
     "living-pano-01": {
       "type": "panorama",

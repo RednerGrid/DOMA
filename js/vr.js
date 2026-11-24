@@ -1,3 +1,4 @@
+import { createOverview } from "./vr/modules/overviewViewer.js";
 import { createPanorama } from "./vr/modules/panoramaViewer.js";
 // Stage 2: project configuration and static scene previews.
 const page = document.body;
@@ -36,6 +37,7 @@ const status = document.querySelector('.vr-status');
 let requestId = 0;
 const panoramaHost = document.querySelector(".vr-panorama");
 let activePanorama = null;
+let activeOverview = null;
 async function initTour() {
   const project = new URLSearchParams(location.search).get('project') || 'barn80';
   if (!/^[a-zA-Z0-9_-]+$/.test(project)) throw new Error('Некорректный ID проекта');
@@ -47,12 +49,13 @@ async function initTour() {
   const asset = path => new URL(path, configURL).href;
   const available = (tour.sections || []).filter(section => scenes[section.startScene]?.image);
   const buttons = new Map();
-  async function openScene(id, sectionId = null) {
+  async function openScene(id, sectionId = null, transition = "instant") {
     const scene = scenes[id];
     if (!scene?.image) throw new Error(`Сцена недоступна: ${id}`);
     const current = ++requestId;
     let nextPanorama = null;
     let probe;
+    let nextOverview;
     try {
       if (scene.type === 'panorama') {
         nextPanorama = await createPanorama(panoramaHost, asset(scene.image), scene.view);
@@ -60,18 +63,29 @@ async function initTour() {
         probe = new Image();
         probe.src = asset(scene.image);
         await probe.decode();
+        if (scene.type === "overview" && scene.objects?.length) {
+          nextOverview = await createOverview(image, probe, scene.objects, asset, object => {
+            if (page.classList.contains("is-clean")) return;
+            openScene(object.targetScene, object.targetSection || available.find(s => s.startScene === object.targetScene)?.id, object.transition).catch(showError);
+          });
+        }
       }
     } catch (error) {
       if (current !== requestId) return;
       throw error;
     }
-    if (current !== requestId) { nextPanorama?.destroy(); return; }
+    if (current !== requestId) { nextPanorama?.destroy(); nextOverview?.destroy(); return; }
+    const fade = transition === "crossfade" && !image.hidden ? image.cloneNode() : null;
+    if (fade) { fade.classList.add("vr-scene-fade"); image.after(fade); }
+    activeOverview?.destroy();
+    activeOverview = nextOverview;
     activePanorama?.destroy();
     activePanorama = nextPanorama;
     panoramaHost.hidden = !nextPanorama;
     image.hidden = !!nextPanorama;
     if (nextPanorama) nextPanorama.start();
-    else { image.src = probe.src; image.alt = scene.title || ''; }
+    else { image.src = probe.src; image.alt = scene.title || ''; nextOverview?.start(); }
+    if (fade) { const animation = fade.animate([{opacity:1},{opacity:0}], {duration:matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400}); animation.finished.then(() => fade.remove(), () => fade.remove()); }
     status.hidden = true;
     for (const [key, button] of buttons) button.setAttribute('aria-pressed', String(key === sectionId));
   }

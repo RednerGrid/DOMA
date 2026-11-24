@@ -16,3 +16,6 @@
 .vr-panorama:active{cursor:grabbing}.vr-panorama canvas{display:block;width:100%;height:100%}
 .vr-panorama[hidden],.vr-image[hidden]{display:none!important}
 .vr-status{z-index:12;pointer-events:none}
+.vr-overview-hover{pointer-events:none;opacity:0;transition:opacity var(--motion);z-index:1}
+.vr-overview-hover.is-active{opacity:1}
+.vr-scene-fade{pointer-events:none;z-index:5}
